@@ -29,8 +29,8 @@ wordCloud.prototype.create = function(){
      this.wordMapDiv.jQCloud(this.words, {
             autoResize: true,
             //shape: 'rectangular',
-            width: 1000,
-            height: 500 
+           width: 1500,
+           height: 500
     });
 };
 wordCloud.prototype.update = function(){
@@ -124,11 +124,15 @@ barChart.prototype.create = function(candidate){
                 gridLines : {
                     display : false
                 },
-                
             }]
+            
         }
     }});
     return barChart;
+};
+barChart.prototype.update = function(){
+   this.trumpBarChart.updateChart();
+   this.hillaryBarChart.updateChart();
 };
 barChart.prototype.update = function(){
    this.trumpBarChart.updateChart();
@@ -147,7 +151,7 @@ function changeTab(option){
         $('#radar-chart').css('display', 'block');
         new radarChart();
     } else {
-        $('#word-map').css('display', 'block');
+        $('#word-map').fadeIn("slow");
         new wordCloud();
     }
     

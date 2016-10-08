@@ -7,28 +7,19 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://D:/twitter4j-4.0.4/lib/twitter4j-core-4.0.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/../java-sdk-3.4.0-jar-with-dependencies.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://D:/unirest-java-1.4.9.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://D:/repos/java-sdk/java-sdk-3.4.0-jar-with-dependencies.jar!/" />
+          <root url="jar://$MODULE_DIR$/T4J/lib/twitter4j-core-4.0.4.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
