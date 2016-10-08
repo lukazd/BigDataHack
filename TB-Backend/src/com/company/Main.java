@@ -2,7 +2,6 @@ package com.company;
 
 import com.ibm.watson.developer_cloud.tone_analyzer.v3.ToneAnalyzer;
 import com.ibm.watson.developer_cloud.tone_analyzer.v3.model.ToneAnalysis;
-import com.mashape.unirest.http.exceptions.UnirestException;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -62,6 +61,7 @@ public class Main {
             List<Double> HExt;
             List<Double> HAgree;
             List<Double> HEmo;
+            List<List<Double>> HilNums;
 
             for (Status tweet : tweets) {
                 String text = tweet.getText();
