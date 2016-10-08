@@ -3,7 +3,7 @@
 
 // globals to get rid of warnings
 var $;
-var Chart; 
+var Chart;
 
 window.onload = function(){
     Chart.defaults.global.tooltips = false;
@@ -50,6 +50,20 @@ radarChart.prototype.createRadarChart = function(){
     });
     return myRadarChart;
 };
+
+function changeTab(option){
+    $('#ratio-charts').css('display', 'none');
+    $('#radar-chart').css('display', 'none');
+    
+    if (option === "Ratio") {
+        $('#ratio-charts').css('display', 'block');
+    } else {
+        $('#radar-chart').css('display', 'block');
+    }
+    
+    return false;
+}
+
 var barChart = function(){
     this.trumpDiv = $("#ratio-chart-trump");
     this.hillaryDiv = $("#ratio-chart-hillary");
@@ -104,3 +118,8 @@ barChart.prototype.createBarChart = function(candidate){
     }});
     return barChart;
 };
+
+barChart.prototype.updateChart = function(){
+   this.trumpBarChart.updateChart();
+   this.hillaryBarChart.updateChart();
+}
