@@ -1,0 +1,10 @@
+= form_for @real_time_display do |f|
+  - if @real_time_display.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@real_time_display.errors.count, "error")} prohibited this real_time_display from being saved:"
+      %ul
+        - @real_time_display.errors.full_messages.each do |msg|
+          %li= msg
+
+  .actions
+    = f.submit 'Save'

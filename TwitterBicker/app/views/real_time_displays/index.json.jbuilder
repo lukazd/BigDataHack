@@ -1,0 +1,1 @@
+json.array! @real_time_displays, partial: 'real_time_displays/real_time_display', as: :real_time_display

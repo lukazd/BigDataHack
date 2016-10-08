@@ -1,0 +1,1 @@
+json.partial! "real_time_displays/real_time_display", real_time_display: @real_time_display
