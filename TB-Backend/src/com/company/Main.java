@@ -47,6 +47,7 @@ public class Main {
             List<Double> TExt;
             List<Double> TAgree;
             List<Double> TEmo;
+            List<List<Double>> Tnums;
             //Hillary Numbers
             List<Double> HAnger;
             List<Double> HDis;
