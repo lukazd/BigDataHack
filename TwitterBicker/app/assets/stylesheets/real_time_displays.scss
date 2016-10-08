@@ -6,6 +6,13 @@ h1 {
     font-size: 50px;
 }
 
+#ratio-chart {
+    /*display: inline-block;
+    width: 40%;
+    margin:0 auto;*/
+    text-align: center;
+}
+
 #trump-ratio-chart {
     display: inline-block;
 }
@@ -13,22 +20,17 @@ h1 {
 #vs-text {
     position: absolute;
     top: 70%;
-     display: inline-block;
-     margin-left: -2%;
+    display: inline-block;
+    margin-left: -2%;
 }
 
 #hillary-ratio-chart {
     display: inline-block;
 }
 
-#trump-img {
+img {
     display: block;
     margin-left: auto;
     margin-right: auto;
-}
-
-#hillary-img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+    padding: 20px;
 }
