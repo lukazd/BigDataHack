@@ -1,16 +1,22 @@
 // Place all the behaviors and hooks related to the matching controller here.
 // All this logic will automatically be available in application.js.
-var Chart = require('src/chart.js');
-// document.onLoad = function(){
+console.log("barchart called");
+// Using requirejs
 
-    
-// }
+
+window.onload = function(){
+    var meanTweetChart = new barChart();
+};
 var barChart = function(){
     this.trumpBarChart = $("#ratio-chart-trump");
     this.hillaryBarChart = $("#ratio-chart-hillary");
+    this.createCharts();
 };
-
+barChart.prototype.test = function(){
+    console.log("test");
+};
 barChart.prototype.createCharts = function(){
+    console.log("create charts");
     var trumpChart = new Chart(this.trumpBarChart, {
     type: 'bar',
     data: {
@@ -36,8 +42,8 @@ barChart.prototype.createCharts = function(){
             }]
         }
     }});
-}
+};
 
-barChart.prototype.updateChart = function(){
+// barChart.prototype.updateChart = function(){
    
-}
+// }
