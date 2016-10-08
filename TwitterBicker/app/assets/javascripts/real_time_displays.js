@@ -28,7 +28,7 @@ var wordCloud = function(){
     $('#word-map').jQCloud(words, {
             autoResize: true,
             //shape: 'rectangular',
-            width: 1000,
+            width: 1500,
             height: 500
     });
 };
@@ -88,7 +88,8 @@ function changeTab(option){
         $('#radar-chart').css('display', 'block');
         new radarChart();
     } else {
-        $('#word-map').css('display', 'block');
+        //$('#word-map').css('display', 'block');
+        $('#word-map').fadeIn("slow");
         new wordCloud();
     }
     
