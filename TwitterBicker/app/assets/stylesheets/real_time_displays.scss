@@ -18,21 +18,18 @@ h1 {
 }
 
 #vs-text {
+    vertical-align: middle;
     display: inline-block;
+    width: 500px;
 }
 
 #hillary-ratio-chart {
     display: inline-block;
 }
 
-#trump-img {
+img {
     display: block;
     margin-left: auto;
     margin-right: auto;
-}
-
-#hillary-img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+    padding: 20px;
 }
