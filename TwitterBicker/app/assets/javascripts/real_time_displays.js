@@ -14,11 +14,11 @@ var barChart = function(){
         HILLARY : 0,
         TRUMP : 1,
     }
-    this.trumpBarChart = $("#ratio-chart-trump");
-    this.hillaryBarChart = $("#ratio-chart-hillary");
+    this.trumpDiv = $("#ratio-chart-trump");
+    this.hillaryDiv = $("#ratio-chart-hillary");
     // create the chart
-    this.createChart(this.candidates.TRUMP);
-    this.createChart(this.candidates.HILLARY);
+    this.trumpBarChart = this.createChart(this.candidates.TRUMP);
+    this.hillaryBarChart = this.createChart(this.candidates.HILLARY);
 };
 barChart.prototype.createChart = function(candidate){
     // getting rid of the top legend
@@ -28,14 +28,12 @@ barChart.prototype.createChart = function(candidate){
     // these will be different for each candidate
     var candidateEl, label, color, data;
     if(candidate == 0){
-        candidateEl = this.hillaryBarChart;
-        label = 'Blue';
+        candidateEl = this.hillaryDiv;
         color = 'rgba(0, 0, 255, 1)';
-        data = 50;
+        data = 100;
     }
     else{
-        candidateEl = this.trumpBarChart;
-        label = 'Red';
+        candidateEl = this.trumpDiv;
         color = 'rgba(255, 0, 0, 1)';
         data = 100;
     }
@@ -64,8 +62,8 @@ barChart.prototype.createChart = function(candidate){
                 }
             }]
         }
-    }
-    });
+    }});
+    return chart;
 };
 barChart.prototype.updateChart = function(){
    
