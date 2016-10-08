@@ -23,6 +23,7 @@ var barChart = function(){
 barChart.prototype.createChart = function(candidate){
     // getting rid of the top legend
     Chart.defaults.global.legend.display = false;
+    Chart.defaults.global.tooltips = false;
     var maxData = 100;
     // these will be different for each candidate
     var candidateEl, label, color, data;
@@ -61,7 +62,6 @@ barChart.prototype.createChart = function(candidate){
                 gridLines : {
                     display : false
                 }
-                // display:false
             }]
         }
     }
