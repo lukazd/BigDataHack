@@ -8,9 +8,9 @@ var d3;
 
 window.onload = function(){
     Chart.defaults.global.tooltips = false;
-    var meanTweetChart = new barChart();
-    var toneAnalyzerChart = new radarChart();
-    var wordCloudTest = new wordCloud();
+    new barChart();
+    
+ 
 };
 var candidates = {
     HILLARY : 0,
@@ -18,14 +18,25 @@ var candidates = {
 };
 var wordCloud = function(){
     console.log("word cloud");
-   var words = [{text: "Lorem", weight: 13},
-  {text: "Ipsum", weight: 10.5},
-  {text: "Dolor", weight: 9.4},
-  {text: "Sit", weight: 8},
-  {text: "Amet", weight: 6.2},
-  {text: "Consectetur", weight: 5},
-  {text: "Adipiscing", weight: 5}];
-    $('#word-map').jQCloud(words);
+    var words = [{text: "Lorem", weight: 13},
+                {text: "Ipsum", weight: 10.5},
+                {text: "Dolor", weight: 9.4},
+                {text: "Sit", weight: 8},
+                {text: "Amet", weight: 6.2},
+                {text: "Consectetur", weight: 5},
+                {text: "Adipiscing", weight: 5}];
+    $('#word-map').jQCloud(words, {
+            autoResize: true,
+            //shape: 'rectangular',
+            width: 1000,
+            height: 500
+    });
+};
+wordCloud.prototype.create = function(){
+    
+};
+wordCloud.prototype.update = function(){
+    
 };
 var radarChart = function(){
     this.radarDiv = $("#radar-chart-trump-hillary");
@@ -71,10 +82,14 @@ function changeTab(option){
     
     if (option === "Ratio") {
         $('#ratio-charts').css('display', 'block');
+        new barChart();
+        
     } else if (option === "Radar") {
         $('#radar-chart').css('display', 'block');
+        new radarChart();
     } else {
         $('#word-map').css('display', 'block');
+        new wordCloud();
     }
     
     return false;
