@@ -6,24 +6,51 @@ var $;
 var Chart; 
 
 window.onload = function(){
+    Chart.defaults.global.tooltips = false;
     var meanTweetChart = new barChart();
+    var toneAnalyzerChart = new radarChart();
 };
 var candidates = {
     HILLARY : 0,
     TRUMP : 1,
 };
 var radarChart = function(){
-    
+    this.radarDiv = $("#radar-chart-trump-hillary");
+    this.radarChart = this.createRadarChart();
 };
 radarChart.prototype.createRadarChart = function(){
-//     var myRadarChart = new Chart(ctx, {
-//     type: 'radar',
-//     data: data,
-//     options: options
-// });
+    var data = {
+        labels: ["Emotional Range", "Openness", "Conscientiousness", "Extraversion", "Agreeableness"],
+        datasets: [
+            {
+                label: "Hillary",
+                backgroundColor: "rgba(0,0,255,0.2)",
+                borderColor: "rgba(179,181,198,1)",
+                pointBackgroundColor: "rgba(179,181,198,1)",
+                pointBorderColor: "#fff",
+                pointHoverBackgroundColor: "#fff",
+                pointHoverBorderColor: "rgba(179,181,198,1)",
+                data: [65, 59, 90, 81, 56]
+            },
+            {
+                label: "Trump",
+                backgroundColor: "rgba(255,99,132,0.2)",
+                borderColor: "rgba(255,99,132,1)",
+                pointBackgroundColor: "rgba(255,99,132,1)",
+                pointBorderColor: "#fff",
+                pointHoverBackgroundColor: "#fff",
+                pointHoverBorderColor: "rgba(255,99,132,1)",
+                data: [28, 48, 40, 19, 96]
+            }
+        ]
+    };
+    var myRadarChart = new Chart(this.radarDiv, {
+        type: 'radar',
+        data:data
+    });
+    return myRadarChart;
 };
 var barChart = function(){
-   
     this.trumpDiv = $("#ratio-chart-trump");
     this.hillaryDiv = $("#ratio-chart-hillary");
     // create the chart
@@ -32,8 +59,6 @@ var barChart = function(){
 };
 barChart.prototype.createBarChart = function(candidate){
     // getting rid of the top legend
-    Chart.defaults.global.legend.display = false;
-    Chart.defaults.global.tooltips = false;
     Chart.defaults.global.defaultFontSize = 20;
     var maxData = 100;
     // these will be different for each candidate
@@ -52,7 +77,6 @@ barChart.prototype.createBarChart = function(candidate){
     type: 'bar',
     data: {
         labels: [data],
-        fontSize:20,
         datasets: [{
             label: data,
             data: [data],
@@ -60,6 +84,8 @@ barChart.prototype.createBarChart = function(candidate){
         }]
     },
     options: {
+        legend: {display:false, fontSize:40},
+        //labels: {fontSize:20},
         scales: {
             yAxes: [{
                 display:false,
