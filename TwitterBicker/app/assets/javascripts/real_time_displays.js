@@ -1,10 +1,12 @@
 // Place all the behaviors and hooks related to the matching controller here.
 // All this logic will automatically be available in application.js.
 
+// globals to get rid of warnings
+var $;
+var Chart; 
 window.onload = function(){
     var meanTweetChart = new barChart();
 };
-
 var barChart = function(){
     this.candidates = {
         HILLARY : 0,
@@ -12,6 +14,7 @@ var barChart = function(){
     }
     this.trumpBarChart = $("#ratio-chart-trump");
     this.hillaryBarChart = $("#ratio-chart-hillary");
+    // create the chart
     this.createChart(this.candidates.TRUMP);
     this.createChart(this.candidates.HILLARY);
 };
@@ -47,14 +50,15 @@ barChart.prototype.createChart = function(candidate){
     options: {
         scales: {
             yAxes: [{
+                display: false,
                 ticks: {
                     beginAtZero:true
                 }
             }]
         }
-    }});
+    }
+    });
 };
-
-// barChart.prototype.updateChart = function(){
+barChart.prototype.updateChart = function(){
    
-// }
+}
