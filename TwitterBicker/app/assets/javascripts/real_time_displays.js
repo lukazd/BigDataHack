@@ -8,19 +8,29 @@ var Chart;
 window.onload = function(){
     var meanTweetChart = new barChart();
 };
+var candidates = {
+    HILLARY : 0,
+    TRUMP : 1,
+};
+var radarChart = function(){
+    
+};
+radarChart.prototype.createRadarChart = function(){
+//     var myRadarChart = new Chart(ctx, {
+//     type: 'radar',
+//     data: data,
+//     options: options
+// });
+};
 var barChart = function(){
-    // properties
-    this.candidates = {
-        HILLARY : 0,
-        TRUMP : 1,
-    }
+   
     this.trumpDiv = $("#ratio-chart-trump");
     this.hillaryDiv = $("#ratio-chart-hillary");
     // create the chart
-    this.trumpBarChart = this.createChart(this.candidates.TRUMP);
-    this.hillaryBarChart = this.createChart(this.candidates.HILLARY);
+    this.trumpBarChart = this.createBarChart(candidates.TRUMP);
+    this.hillaryBarChart = this.createBarChart(candidates.HILLARY);
 };
-barChart.prototype.createChart = function(candidate){
+barChart.prototype.createBarChart = function(candidate){
     // getting rid of the top legend
     Chart.defaults.global.legend.display = false;
     Chart.defaults.global.tooltips = false;
@@ -38,12 +48,13 @@ barChart.prototype.createChart = function(candidate){
         color = 'rgba(255, 0, 0, 1)';
         data = 100;
     }
-    var chart = new Chart(candidateEl, {
+    var barChart = new Chart(candidateEl, {
     type: 'bar',
     data: {
-        label: '# of mean tweets',
         labels: [data],
+        fontSize:20,
         datasets: [{
+            label: data,
             data: [data],
             backgroundColor: [color],
         }]
@@ -65,8 +76,5 @@ barChart.prototype.createChart = function(candidate){
             }]
         }
     }});
-    return chart;
+    return barChart;
 };
-barChart.prototype.updateChart = function(){
-   
-}
