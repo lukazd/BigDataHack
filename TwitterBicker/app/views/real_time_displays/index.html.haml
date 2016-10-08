@@ -1,5 +1,23 @@
 %h1 Twitter Bicker
-#ratio-charts{align: "center"}
+
+#tabs
+  %ul.tab
+    %li
+      %a{href: "#", class: "tablinks", onclick: ""} Ratio
+    %li
+      %a{href: "#", class: "tablinks", onclick: ""} Radar
+    %li
+      %a{href: "#", class: "tablinks", onclick: "openCity(event, 'Tokyo')"} Other
+
+%blockquote{class:'twitter-tweet', data_lang:'en'}
+  %p{lang: "en", dir: "ltr"} 
+    Certainly has been an interesting 24 hours! 
+    &mdash; Donald J. Trump (@realDonaldTrump)
+    %a{href: "https://twitter.com/realDonaldTrump/status/784767399442653184"} October 8, 2016
+<!-- %script async src="//platform.twitter.com/widgets.js" charset="utf-8"-->
+
+
+#ratio-charts{style: "display:block", align: "center"}
   %table
     %tbody
       %tr
@@ -7,10 +25,12 @@
           #trump-ratio-chart
             = image_tag("trump_dropping_knowledge.png", id: 'trump-img', :alt => "rss feed", width: '200', height: '200')
             %canvas{id: 'ratio-chart-trump', width: '200', height: '400'}
-        %td    
+        %td
           #vs-text
-            %h2#vs-header V.S
-        %td    
+            %h2#vs-header V.S.
+        %td
           #hillary-ratio-chart
             = image_tag("hillary_happy.png", id: 'hillary-img', :alt => "rss feed", width: '200', height: '200')
             %canvas{id: 'ratio-chart-hillary', width: '200', height: '400'}
+    
+#radar-chart{align: "center"}
