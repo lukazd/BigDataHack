@@ -75,8 +75,7 @@ function changeTab(option){
     }
     
     return false;
-}
-
+};
 var barChart = function(){
     this.trumpDiv = $("#ratio-chart-trump");
     this.hillaryDiv = $("#ratio-chart-hillary");
@@ -131,8 +130,7 @@ barChart.prototype.createBarChart = function(candidate){
     }});
     return barChart;
 };
-
 barChart.prototype.updateChart = function(){
    this.trumpBarChart.updateChart();
    this.hillaryBarChart.updateChart();
-}
+};
