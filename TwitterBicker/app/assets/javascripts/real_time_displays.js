@@ -67,11 +67,14 @@ radarChart.prototype.createRadarChart = function(){
 function changeTab(option){
     $('#ratio-charts').css('display', 'none');
     $('#radar-chart').css('display', 'none');
+    $('#word-map').css('display', 'none');
     
     if (option === "Ratio") {
         $('#ratio-charts').css('display', 'block');
-    } else {
+    } else if (option === "Radar") {
         $('#radar-chart').css('display', 'block');
+    } else {
+        $('#word-map').css('display', 'block');
     }
     
     return false;
