@@ -4,10 +4,12 @@
 // globals to get rid of warnings
 var $;
 var Chart; 
+
 window.onload = function(){
     var meanTweetChart = new barChart();
 };
 var barChart = function(){
+    // properties
     this.candidates = {
         HILLARY : 0,
         TRUMP : 1,
@@ -19,41 +21,47 @@ var barChart = function(){
     this.createChart(this.candidates.HILLARY);
 };
 barChart.prototype.createChart = function(candidate){
+    // getting rid of the top legend
+    Chart.defaults.global.legend.display = false;
+    var maxData = 100;
     // these will be different for each candidate
-    var candidateEl, label, color;
+    var candidateEl, label, color, data;
     if(candidate == 0){
         candidateEl = this.hillaryBarChart;
         label = 'Blue';
         color = 'rgba(0, 0, 255, 1)';
+        data = 50;
     }
     else{
         candidateEl = this.trumpBarChart;
         label = 'Red';
         color = 'rgba(255, 0, 0, 1)';
+        data = 100;
     }
     var chart = new Chart(candidateEl, {
     type: 'bar',
     data: {
-        labels: [label],
+        label: '# of mean tweets',
+        labels: [data],
         datasets: [{
-            label: '# of mean tweets',
-            data: [50],
-            backgroundColor: [
-                color
-            ],
-            borderColor: [
-                color
-            ],
-            borderWidth: 0
+            data: [data],
+            backgroundColor: [color],
         }]
     },
     options: {
         scales: {
             yAxes: [{
-                display: false,
+                display:false,
                 ticks: {
-                    beginAtZero:true
+                    beginAtZero:true,
+                    max:maxData
                 }
+            }],
+            xAxes: [{
+                gridLines : {
+                    display : false
+                }
+                // display:false
             }]
         }
     }
