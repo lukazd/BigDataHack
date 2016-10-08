@@ -24,13 +24,14 @@ barChart.prototype.createChart = function(candidate){
     // getting rid of the top legend
     Chart.defaults.global.legend.display = false;
     Chart.defaults.global.tooltips = false;
+    Chart.defaults.global.defaultFontSize = 20;
     var maxData = 100;
     // these will be different for each candidate
     var candidateEl, label, color, data;
     if(candidate == 0){
         candidateEl = this.hillaryDiv;
         color = 'rgba(0, 0, 255, 1)';
-        data = 100;
+        data = 20;
     }
     else{
         candidateEl = this.trumpDiv;
@@ -59,7 +60,8 @@ barChart.prototype.createChart = function(candidate){
             xAxes: [{
                 gridLines : {
                     display : false
-                }
+                },
+                
             }]
         }
     }});
