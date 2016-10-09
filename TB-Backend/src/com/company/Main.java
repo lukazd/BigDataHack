@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class Main {
 
-
+    static void
     public static void main(String[] args) throws TwitterException {
 
         ConfigurationBuilder cb = new ConfigurationBuilder();
