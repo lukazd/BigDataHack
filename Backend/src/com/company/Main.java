@@ -28,7 +28,7 @@ public class Main {
     static Status angriest_tweet;
 
     static int iterations;
-    static int run_avg_Tanger;
+    static int runavg_Tanger;
 
     static void setTweets(String q) {
         try {
@@ -78,7 +78,7 @@ public class Main {
                 }
             }
             Double new_anger = sums.get("Anger");
-            Double d = new_anger - old_anger
+            Double d = new_anger - old_anger;
             if (d > max_anger) {
                 max_anger = d;
                 angriest_tweet = tweet;
@@ -87,7 +87,13 @@ public class Main {
         }
     }
 
-    static updateWordCounts(HashMap<String,Integer> dict, )
+    static void updateWordCounts(HashMap<String,Integer> dict) {
+        for (Status t : tweets) {
+            String text = t.getText();
+            text = text.toUpperCase();
+
+        }
+    }
 
     public static void main(String[] args) throws TwitterException {
 
@@ -111,78 +117,93 @@ public class Main {
         String Tquery = "americafirst";
 
         // LOOP BEGINS HERE
+        iterations = 0;
+        while (true) {
+            iterations++;
 
-        Tsums = new HashMap<>();
-        Tcounts = new HashMap<>();
-        Hsums = new HashMap<>();
-        Hcounts = new HashMap<>();
+            Tsums = new HashMap<>();
+            Tcounts = new HashMap<>();
+            Hsums = new HashMap<>();
+            Hcounts = new HashMap<>();
 
-        setTweets(Tquery);
-        calcSumsAndAves(tweets, Tsums, Tcounts);
-        setTweets(Hquery);
-        calcSumsAndAves(tweets, Hsums, Hcounts);
+            setTweets(Tquery);
+            calcSumsAndAves(tweets, Tsums, Tcounts);
+            setTweets(Hquery);
+            calcSumsAndAves(tweets, Hsums, Hcounts);
 
-        Tavgs = new HashMap<>();
-        Tsums.forEach((k, v) -> {
-            Double a = v / tweetcount;
-            Tavgs.put(k, a);
-        });
+            Tavgs = new HashMap<>();
+            Tsums.forEach((k, v) -> {
+                Double a = v / tweetcount;
+                Tavgs.put(k, a);
+            });
 
-        System.out.println("Trump:");
-        System.out.println("Average values:");
-        Tavgs.forEach((k, v) -> {
-            System.out.println(k + ": " + Double.toString(v));
-        });
-        System.out.println("Counts:");
-        Tcounts.forEach((k, v) -> {
-            System.out.println(k + ": " + Double.toString(v));
-        });
+            System.out.println("Trump:");
+            System.out.println("Average values:");
+            Tavgs.forEach((k, v) -> {
+                System.out.println(k + ": " + Double.toString(v));
+            });
+            System.out.println("Counts:");
+            Tcounts.forEach((k, v) -> {
+                System.out.println(k + ": " + Double.toString(v));
+            });
 
-        Havgs = new HashMap<>();
-        Hsums.forEach((k, v) -> {
-            Double a = v / tweetcount;
-            Havgs.put(k, a);
-        });
+            Havgs = new HashMap<>();
+            Hsums.forEach((k, v) -> {
+                Double a = v / tweetcount;
+                Havgs.put(k, a);
+            });
 
-        System.out.println("Clinton:");
-        System.out.println("Average values:");
-        Havgs.forEach((k, v) -> {
-            System.out.println(k + ": " + Double.toString(v));
-        });
-        System.out.println("Counts:");
-        Hcounts.forEach((k, v) -> {
-            System.out.println(k + ": " + Double.toString(v));
-        });
+            System.out.println("Clinton:");
+            System.out.println("Average values:");
+            Havgs.forEach((k, v) -> {
+                System.out.println(k + ": " + Double.toString(v));
+            });
+            System.out.println("Counts:");
+            Hcounts.forEach((k, v) -> {
+                System.out.println(k + ": " + Double.toString(v));
+            });
 
-        PushData pushData = new PushData();
+            PushData pushData = new PushData();
 
-        int totalangry = Tcounts.get("Anger") + Hcounts.get("Anger");
-        if(totalangry != 0) {
-            int hillaryangry = Hcounts.get("Anger") / totalangry;
-            int trumpangry = Tcounts.get("Anger") / totalangry;
-            System.out.println(hillaryangry + " : " + trumpangry);
-            pushData.updateAngryTweets(hillaryangry, trumpangry);
-        } else {
-            System.out.println("No angry tweets");
+            int totalangry = Tcounts.get("Anger") + Hcounts.get("Anger");
+            if(totalangry != 0) {
+                int hillaryangry = Hcounts.get("Anger") / totalangry;
+                int trumpangry = Tcounts.get("Anger") / totalangry;
+                System.out.println(hillaryangry + " : " + trumpangry);
+                pushData.updateAngryTweets(hillaryangry, trumpangry);
+            } else {
+                System.out.println("No angry tweets");
+            }
+
+            pushData.updateAngriestTweet(angriest_tweet.getUser().toString(),angriest_tweet.getText());
+
+            HashMap<String, Object> HSocial = new HashMap<>();
+            HSocial.put("Agreeableness", Hcounts.get("Agreeableness"));
+            HSocial.put("Conscientiousness", Hcounts.get("Conscientiousness"));
+            HSocial.put("Emotional Range", Hcounts.get("Emotional Range"));
+            HSocial.put("Extraversion", Hcounts.get("Extraversion"));
+            HSocial.put("Openness", Hcounts.get("Openness"));
+            pushData.updateSocialTendencies(PushData.Candidate.HILLARY, HSocial);
+
+            HashMap<String, Object> TSocial = new HashMap<>();
+            TSocial.put("Agreeableness", Tcounts.get("Agreeableness"));
+            TSocial.put("Conscientiousness", Tcounts.get("Conscientiousness"));
+            TSocial.put("Emotional Range", Tcounts.get("Emotional Range"));
+            TSocial.put("Extraversion", Tcounts.get("Extraversion"));
+            TSocial.put("Openness", Tcounts.get("Openness"));
+            pushData.updateSocialTendencies(PushData.Candidate.TRUMP, TSocial);
+
+            if (iterations > 4) {
+                pushData.destroyConnection();
+                System.exit(0);
+            }
+
+            try {
+                Thread.sleep(secondsDelay*1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                System.exit(-1);
+            }
         }
-
-        pushData.updateAngriestTweet(angriest_tweet.getUser().toString(),angriest_tweet.getText());
-
-        HashMap<String, Object> HSocial = new HashMap<>();
-        HSocial.put("Agreeableness", Hcounts.get("Agreeableness"));
-        HSocial.put("Conscientiousness", Hcounts.get("Conscientiousness"));
-        HSocial.put("Emotional Range", Hcounts.get("Emotional Range"));
-        HSocial.put("Extraversion", Hcounts.get("Extraversion"));
-        HSocial.put("Openness", Hcounts.get("Openness"));
-        pushData.updateSocialTendencies(PushData.Candidate.HILLARY, HSocial);
-
-        HashMap<String, Object> TSocial = new HashMap<>();
-        TSocial.put("Agreeableness", Tcounts.get("Agreeableness"));
-        TSocial.put("Conscientiousness", Tcounts.get("Conscientiousness"));
-        TSocial.put("Emotional Range", Tcounts.get("Emotional Range"));
-        TSocial.put("Extraversion", Tcounts.get("Extraversion"));
-        TSocial.put("Openness", Tcounts.get("Openness"));
-        pushData.updateSocialTendencies(PushData.Candidate.TRUMP, TSocial);
-
     }
 }
