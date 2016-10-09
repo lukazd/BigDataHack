@@ -199,8 +199,8 @@ public class Main {
             if(totalangry != 0) {
                 double hillaryangry = h_angerdisgust / totalangry;
                 double trumpangry = t_angerdisgust / totalangry;
-                int percent_trump = (int) (trumpangry*100);
-                int percent_hillary = (int) (hillaryangry*100);
+                int percent_trump = (int) Math.round(trumpangry*100);
+                int percent_hillary = (int) Math.round(hillaryangry*100);
                 runavg_Tanger = ( (runavg_Tanger*iterations + percent_trump) / (iterations + 1) );
                 System.out.println(hillaryangry + " : " + trumpangry);
                 pushData.updateAngryTweets(percent_hillary, percent_trump);
