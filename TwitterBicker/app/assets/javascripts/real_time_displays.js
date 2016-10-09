@@ -37,6 +37,11 @@ myFirebaseRef.child('Trump').on('value', function(dataSnapshot) {
     console.log(dataSnapshot.val());
     
 });
+myFirebaseRef.child('AngriestTweet').on('value', function(dataSnapshot) {
+    var newData = dataSnapshot.val();
+    $('#tweet').text(newData["Tweet"]);
+    $('#user').text(newData["User"]);
+});
 
 var wordCloud = function(){
     this.wordCloudDiv = $('#word-map');
