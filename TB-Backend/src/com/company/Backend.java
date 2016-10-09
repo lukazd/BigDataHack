@@ -21,8 +21,59 @@ public class Backend {
     static HashMap<String, Double> Tsums;
     static HashMap<String,Integer> Tcounts;
     static HashMap<String, Double> Tavgs;
+
+    static HashMap<String, Double> Tavgs;
     static twitter4j.Twitter twitter;
     static ToneAnalyzer service;
+    static twitter4j.Twitter twitter;
+    static List<Status> tweets;
+
+    static void setTweets(String q) {
+        try {
+            Query query = new Query(q);
+            query.count(tweetcount);
+            QueryResult  result;
+            result = twitter.search(query);
+            tweets = result.getTweets();
+
+        } catch (TwitterException te) {
+            te.printStackTrace();
+            System.out.println("Failed to search tweets: " + te.getMessage());
+            System.exit(-1);
+        }
+
+    }
+
+    static void calcSumsAndAves(List<Status> tweets, HashMap<String,Double> sums, HashMap<String,Integer> counts){
+        for (Status tweet : tweets) {
+            String text = tweet.getText();
+            System.out.println("@" + tweet.getUser().getScreenName() + " - " + text);
+            ToneAnalysis tone = service.getTone(text, null).execute();
+
+            for (ToneCategory tc : tone.getDocumentTone().getTones()) {
+                for (ToneScore ts : tc.getTones()) {
+                    String n = ts.getName();
+                    Double s = ts.getScore();
+                    Double current = sums.get(n);
+
+                    if (current == null) {
+                        sums.put(n, s);
+                    } else {
+                        sums.put(n, s+current);
+                    }
+
+                    Integer cur = counts.get(n);
+                    if (cur == null) {
+                        counts.put(n,0);
+                        cur = 0;
+                    }
+                    if (s>.2) {
+                        counts.put(n,cur+1);
+                    }
+                }
+            }
+        }
+    }
 
     static List<Status> getTweets(String q) {
         List<Status> tweets = null;
@@ -88,19 +139,19 @@ public class Backend {
         service = new ToneAnalyzer(ToneAnalyzer.VERSION_DATE_2016_05_19);
         service.setEndPoint("https://gateway.watsonplatform.net/tone-analyzer/api");
         service.setUsernameAndPassword("4f41c873-5cd6-46ac-a159-becf87a5687f", "8uGOobS4Tozq");
-        List<Status> tweets = null;
+        tweets = null;
 
-        String Hquery = "";
-        String Tquery = "";
+        String Hquery = "imwithher";
+        String Tquery = "americafirst";
 
         Tsums = new HashMap<>();
         Tcounts = new HashMap<>();
         Hsums = new HashMap<>();
         Hcounts = new HashMap<>();
 
-        getTweets(Tquery);
+        setTweets(Tquery);
         calcSumsAndAves(tweets, Tsums, Tcounts);
-        getTweets(Hquery);
+        setTweets(Hquery);
         calcSumsAndAves(tweets, Hsums, Hcounts);
 
         Tavgs = new HashMap<>();
@@ -135,7 +186,7 @@ public class Backend {
             System.out.println(k + ": " + Double.toString(v));
         });
 
-    }
 
+    }
 
 }
