@@ -41,17 +41,23 @@ myFirebaseRef.child("AngerScore").on('value', function(dataSnapshot){
     bChart.update(dataSnapshot.val());
     
 });
+myFirebaseRef.child("WordFrequency").on('value', function(dataSnapshot){
+    console.log("word freq: ");
+    console.log(dataSnapshot.val());
+    wCloud.update(dataSnapshot.val());
+    
+    
+});
 var wordCloud = function(){
+    this.created = false;
     this.wordCloudDiv = $('#word-map');
-    this.data = [{text: "Lorem", weight: 13},
-                {text: "Ipsum", weight: 10.5},
-                {text: "Dolor", weight: 9.4},
-                {text: "Sit", weight: 8},
-                {text: "Amet", weight: 6.2},
-                {text: "Consectetur", weight: 5},
-                {text: "Adipiscing", weight: 5}];
+    this.data = [{text: "Lorem", weight: 13}, {text: "Lorem", weight: 13}];
+    console.log(this.data);
+    
+             
 };
 wordCloud.prototype.create = function(){
+    this.created = true;
     this.wordCloudDiv.jQCloud(this.data, {
             autoResize: true,
             //shape: 'rectangular',
@@ -59,7 +65,19 @@ wordCloud.prototype.create = function(){
             height: 500
     });
 };
-wordCloud.prototype.update = function(){
+wordCloud.prototype.update = function(newData){
+    for(var key in newData){
+        if(newData.hasOwnProperty(key)){
+            console.log(key + " -> " + newData[key]);
+            var json = {text: key, weight: parseInt(newData[key])};
+            this.data.push(json);
+        }
+    }
+    if(this.created){
+        this.wordCloudDiv.jQCloud('update', this.data);
+    }
+    console.log(this.data);
+    
     
 };
 var radarChart = function(){
@@ -182,7 +200,6 @@ barChart.prototype.update = function(newData){
     this.hillaryData[0] = newData.Hillary;
     if(this.trumpChart && this.hillaryChart){
         console.log("trump data: " + this.trumpData);
-        
         
         this.trumpChart.update();
         this.hillaryChart.update();
