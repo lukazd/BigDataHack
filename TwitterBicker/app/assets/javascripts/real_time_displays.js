@@ -35,7 +35,6 @@ myFirebaseRef.child('Trump').on('value', function(dataSnapshot) {
     console.log(dataSnapshot.val());
     
 });
-
 myFirebaseRef.child("AngerScore").on('value', function(dataSnapshot){
     console.log("Anger score");
     console.log(dataSnapshot.val());
@@ -49,21 +48,16 @@ myFirebaseRef.child("WordFrequency").on('value', function(dataSnapshot){
     
     
 });
-
 myFirebaseRef.child('AngriestTweet').on('value', function(dataSnapshot) {
     var newData = dataSnapshot.val();
     $('#tweet').text(newData["Tweet"]);
     $('#user').text(newData["User"]);
 });
 
-
 var wordCloud = function(){
     this.created = false;
     this.wordCloudDiv = $('#word-map');
-    this.data = [{text: "Lorem", weight: 13}, {text: "Lorem", weight: 13}];
-    console.log(this.data);
-    
-             
+    this.data = [];
 };
 wordCloud.prototype.create = function(){
     this.created = true;
@@ -85,9 +79,6 @@ wordCloud.prototype.update = function(newData){
     if(this.created){
         this.wordCloudDiv.jQCloud('update', this.data);
     }
-    console.log(this.data);
-    
-    
 };
 var radarChart = function(){
     this.hillaryData = [];
@@ -103,7 +94,7 @@ radarChart.prototype.create = function(){
             {
                 label: "Hillary",
                 backgroundColor: "rgba(0,0,255,0.2)",
-                borderColor: "rgba(179,181,198,1)",
+                borderColor: "rgba(0,0,255,1)",
                 pointBackgroundColor: "rgba(179,181,198,1)",
                 pointBorderColor: "#fff",
                 pointHoverBackgroundColor: "#fff",
@@ -112,9 +103,9 @@ radarChart.prototype.create = function(){
             },
             {
                 label: "Trump",
-                backgroundColor: "rgba(255,99,132,0.2)",
-                borderColor: "rgba(255,99,132,1)",
-                pointBackgroundColor: "rgba(255,99,132,1)",
+                backgroundColor: "rgba(255,0,0,0.2)",
+                borderColor: "rgba(255,0,0,1)",
+                pointBackgroundColor: "rgba(255,0,0,1)",
                 pointBorderColor: "#fff",
                 pointHoverBackgroundColor: "#fff",
                 pointHoverBorderColor: "rgba(255,99,132,1)",
@@ -208,8 +199,6 @@ barChart.prototype.update = function(newData){
     this.trumpData[0] = newData.Trump;
     this.hillaryData[0] = newData.Hillary;
     if(this.trumpChart && this.hillaryChart){
-        console.log("trump data: " + this.trumpData);
-        
         this.trumpChart.update();
         this.hillaryChart.update();
     }
@@ -217,7 +206,6 @@ barChart.prototype.update = function(newData){
     this.trumpChart = bChart.create(candidates.TRUMP);
     this.hillaryChart = bChart.create(candidates.HILLARY);
     }
-    console.log("update data");
 };
 function changeTab(option){
     $('#ratio-charts').css('display', 'none');
