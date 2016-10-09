@@ -1,6 +1,5 @@
 package com.company;
 
-
         import com.ibm.watson.developer_cloud.tone_analyzer.v3.ToneAnalyzer;
         import com.ibm.watson.developer_cloud.tone_analyzer.v3.model.ToneAnalysis;
         import com.ibm.watson.developer_cloud.tone_analyzer.v3.model.ToneCategory;
@@ -27,7 +26,10 @@ public class Main {
     static ToneAnalyzer service;
     static List<Status> tweets;
     static Status angriest_tweet;
-    static HashMap<String, Integer> wordcounts;
+
+    static int iterations;
+    static int run_avg_Tanger;
+
 
     static void setTweets(String q) {
         try {
@@ -103,7 +105,7 @@ public class Main {
         }
         return tweets;
     }
-    
+
     public static void main(String[] args) throws TwitterException {
 
         ConfigurationBuilder cb = new ConfigurationBuilder();
@@ -124,6 +126,8 @@ public class Main {
 
         String Hquery = "imwithher";
         String Tquery = "americafirst";
+
+        // LOOP BEGINS HERE
 
         Tsums = new HashMap<>();
         Tcounts = new HashMap<>();
@@ -179,6 +183,8 @@ public class Main {
             System.out.println("No angry tweets");
         }
 
+        pushData.updateAngriestTweet(angriest_tweet.getUser().toString(),angriest_tweet.getText());
+
         HashMap<String, Object> HSocial = new HashMap<>();
         HSocial.put("Agreeableness", Hcounts.get("Agreeableness"));
         HSocial.put("Conscientiousness", Hcounts.get("Conscientiousness"));
@@ -195,13 +201,5 @@ public class Main {
         TSocial.put("Openness", Tcounts.get("Openness"));
         pushData.updateSocialTendencies(PushData.Candidate.TRUMP, TSocial);
 
-        pushData.updateAngriestTweet(angriest_tweet.getUser().toString(),angriest_tweet.getText());
-
-        int Hangry = Hcounts.get("Anger");
-        int Tangry = Tcounts.get("Anger"):
-        int total = Hangry + Tangry;
-        double Hpercent = Hangry/total;
-        double Tpercent = Tangry/total;
-        pushData.updateAngryTweets((int) (Hpercent + 0.5),(int) (Tpercent + 0.5));
     }
 }
