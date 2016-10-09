@@ -35,6 +35,7 @@ myFirebaseRef.child('Trump').on('value', function(dataSnapshot) {
     console.log(dataSnapshot.val());
     
 });
+
 myFirebaseRef.child("AngerScore").on('value', function(dataSnapshot){
     console.log("Anger score");
     console.log(dataSnapshot.val());
@@ -48,6 +49,14 @@ myFirebaseRef.child("WordFrequency").on('value', function(dataSnapshot){
     
     
 });
+
+myFirebaseRef.child('AngriestTweet').on('value', function(dataSnapshot) {
+    var newData = dataSnapshot.val();
+    $('#tweet').text(newData["Tweet"]);
+    $('#user').text(newData["User"]);
+});
+
+
 var wordCloud = function(){
     this.created = false;
     this.wordCloudDiv = $('#word-map');
