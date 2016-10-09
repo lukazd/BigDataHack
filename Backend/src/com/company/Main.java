@@ -16,7 +16,7 @@ public class Main {
 
     static int tweetcount = 20;
     static int secondsDelay = 5;
-    static int loopcount = 3;
+    static int loopcount = 1;
 
     static HashMap<String, Double> Hsums;
     static HashMap<String, Integer> Hcounts;
@@ -34,6 +34,8 @@ public class Main {
 
     static int iterations;
     static int runavg_Tanger;
+    static HashMap<String, Double> h_soc_avgs;
+    static HashMap<String, Double> t_soc_avgs;
 
     static void setTweets(String q) {
         try {
@@ -102,7 +104,7 @@ public class Main {
                 if (word.length() > 3) {
                     if (dict.containsKey(word)) {
                         Integer count = (Integer) dict.get(word);
-                        dict.put(word, count+1);
+                        dict.put(word, count + 1 );
                     } else {
                         dict.put(word, 1);
                     }
@@ -183,12 +185,12 @@ public class Main {
 
             PushData pushData = new PushData();
 
-            int totalangry = Tcounts.get("Anger") + Hcounts.get("Anger");
+            Double totalangry = (double) (Tcounts.get("Anger") + Hcounts.get("Anger"));
             if(totalangry != 0) {
                 double hillaryangry = Hcounts.get("Anger") / totalangry;
                 double trumpangry = Tcounts.get("Anger") / totalangry;
-                int percent_trump = (int) trumpangry*100;
-                int percent_hillary = (int) hillaryangry*100;
+                int percent_trump = (int) (trumpangry*100);
+                int percent_hillary = (int) (hillaryangry*100);
                 runavg_Tanger = ( (runavg_Tanger*iterations + percent_trump) / (iterations + 1) );
                 System.out.println(hillaryangry + " : " + trumpangry);
                 pushData.updateAngryTweets(percent_hillary, percent_trump);
@@ -217,7 +219,7 @@ public class Main {
             pushData.updateSocialTendencies(PushData.Candidate.TRUMP, TSocial);
 
             iterations++;
-            if (iterations > loopcount) {
+            if (iterations >= loopcount) {
                 pushData.destroyConnection();
                 System.exit(0);
             }
