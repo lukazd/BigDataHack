@@ -97,6 +97,7 @@ wordCloud.prototype.create = function(){
     });
 };
 wordCloud.prototype.update = function(newData){
+    this.data = [];
     for(var key in newData){
         if(newData.hasOwnProperty(key)){
             console.log(key + " -> " + newData[key]);
