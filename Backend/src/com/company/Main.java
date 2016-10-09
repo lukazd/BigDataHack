@@ -12,16 +12,15 @@ package com.company;
 public class Main {
 
     static int tweetcount = 2;
-    static int secondsDelay = 30;
+    static int secondsDelay = 5;
 
     static HashMap<String, Double> Hsums;
     static HashMap<String, Integer> Hcounts;
     static HashMap<String, Double> Havgs;
-
     static HashMap<String, Double> Tsums;
     static HashMap<String, Integer> Tcounts;
-
     static HashMap<String, Double> Tavgs;
+
     static twitter4j.Twitter twitter;
     static ToneAnalyzer service;
     static List<Status> tweets;
@@ -116,8 +115,8 @@ public class Main {
         String Hquery = "imwithher";
         String Tquery = "americafirst";
 
-        // LOOP BEGINS HERE
         iterations = 0;
+        runavg_Tanger = 0;
         while (true) {
             iterations++;
 
@@ -169,6 +168,7 @@ public class Main {
             if(totalangry != 0) {
                 int hillaryangry = Hcounts.get("Anger") / totalangry;
                 int trumpangry = Tcounts.get("Anger") / totalangry;
+                runavg_Tanger = ( (runavg_Tanger*iterations + trumpangry) / (iterations + 1) );
                 System.out.println(hillaryangry + " : " + trumpangry);
                 pushData.updateAngryTweets(hillaryangry, trumpangry);
             } else {
