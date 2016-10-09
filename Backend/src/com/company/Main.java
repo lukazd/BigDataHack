@@ -10,13 +10,12 @@ package com.company;
         import java.util.Arrays;
         import java.util.HashMap;
         import java.util.List;
-        import java.util.Objects;
 
 public class Main {
 
     static int tweetcount = 5;
-    static int secondsDelay = 5;
-    static int loopcount = 2;
+    static int secondsDelay = 60;
+    static int loopcount = 1;
     static int minutes_to_run = 5;
 
     static HashMap<String, Double> Hsums;
@@ -42,6 +41,7 @@ public class Main {
         try {
             Query query = new Query(q);
             query.count(tweetcount);
+            query.resultType(Query.ResultType.popular);
             QueryResult result;
             result = twitter.search(query);
             tweets = result.getTweets();
@@ -133,8 +133,8 @@ public class Main {
         service.setUsernameAndPassword("4f41c873-5cd6-46ac-a159-becf87a5687f", "8uGOobS4Tozq");
         tweets = null;
 
-        String Hquery = "imwithher%20strongertogether";
-        String Tquery = "americafirst%20neverhillary";
+        String Hquery = "imwithher%20strongertogether%20-americafirst%20-neverhillary";
+        String Tquery = "americafirst%20neverhillary%20-imwithher%20-strongertogether";
 
         iterations = 0;
         runavg_Tanger = 0;
