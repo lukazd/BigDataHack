@@ -12,37 +12,24 @@ import java.util.List;
 public class Backend {
 
     static int tweetcount = 2;
+    static int secondsDelay = 30;
 
     static HashMap<String,Double> Hsums;
     static HashMap<String,Integer> Hcounts;
+    static HashMap<String, Double> Havgs;
 
-    static HashMap<String, Double> Tsums = new HashMap<>();
-    static HashMap<String,Integer> Tcounts = new HashMap<>();
-
+    static HashMap<String, Double> Tsums;
+    static HashMap<String,Integer> Tcounts;
+    static HashMap<String, Double> Tavgs;
+    static twitter4j.Twitter twitter;
     static ToneAnalyzer service;
 
-    public static void main(String[] args) throws TwitterException {
-
-        ConfigurationBuilder cb = new ConfigurationBuilder();
-
-        cb.setDebugEnabled(true)
-                .setOAuthConsumerKey("Ovr3EoOFw1Ppu73Zk63PNk59u")
-                .setOAuthConsumerSecret("CKjdghqEB3gtK1ZbBJqmu8uiPYjZk654YYeeXTLtO2Z49lnkZ1")
-                .setOAuthAccessToken("138859220-frq4DrOGb9Fsyw02Dh0iDZO3r4fHbRJ2mq3kUm3V")
-                .setOAuthAccessTokenSecret("PQ9qGeX0mS1EJiaWp1alpqiIHX9zpfIDTZC765jUJ0Fiw");
-
-        TwitterFactory tf = new TwitterFactory(cb.build());
-        twitter4j.Twitter twitter = tf.getInstance();
-
-        service = new ToneAnalyzer(ToneAnalyzer.VERSION_DATE_2016_05_19);
-        service.setEndPoint("https://gateway.watsonplatform.net/tone-analyzer/api");
-        service.setUsernameAndPassword("4f41c873-5cd6-46ac-a159-becf87a5687f", "8uGOobS4Tozq");
+    static List<Status> getTweets(String q) {
         List<Status> tweets = null;
-
         try {
-            Query query = new Query("americafirst");
+            Query query = new Query(q);
             query.count(tweetcount);
-            QueryResult  result;
+            QueryResult result;
             result = twitter.search(query);
             tweets = result.getTweets();
 
@@ -51,38 +38,7 @@ public class Backend {
             System.out.println("Failed to search tweets: " + te.getMessage());
             System.exit(-1);
         }
-
-        calcSumsAndAves(tweets, Tsums, Tcounts);
-        calcSumsAndAves(tweets, Hsums, Hcounts);
-
-        HashMap<String,Double> Tavgs = new HashMap<>();
-        Tsums.forEach((k,v)->{
-            Double a = v/tweetcount;
-            Tavgs.put(k,a);
-        });
-        System.out.println("Average values:");
-        Tavgs.forEach((k,v)->{
-            System.out.println(k + ": " + Double.toString(v));
-        });
-        System.out.println("Counts:");
-        Tcounts.forEach((k,v)->{
-            System.out.println(k + ": " + Double.toString(v));
-        });
-
-        HashMap<String,Double> Havgs = new HashMap<>();
-        Hsums.forEach((k,v)->{
-            Double a = v/tweetcount;
-            Havgs.put(k,a);
-        });
-        System.out.println("Average values:");
-        Havgs.forEach((k,v)->{
-            System.out.println(k + ": " + Double.toString(v));
-        });
-        System.out.println("Counts:");
-        Hcounts.forEach((k,v)->{
-            System.out.println(k + ": " + Double.toString(v));
-        });
-
+        return tweets;
     }
 
     static void calcSumsAndAves(List<Status> tweets, HashMap<String,Double> sums, HashMap<String,Integer> counts){
@@ -115,5 +71,71 @@ public class Backend {
             }
         }
     }
+
+    public static void main(String[] args) throws TwitterException {
+
+        ConfigurationBuilder cb = new ConfigurationBuilder();
+
+        cb.setDebugEnabled(true)
+                .setOAuthConsumerKey("Ovr3EoOFw1Ppu73Zk63PNk59u")
+                .setOAuthConsumerSecret("CKjdghqEB3gtK1ZbBJqmu8uiPYjZk654YYeeXTLtO2Z49lnkZ1")
+                .setOAuthAccessToken("138859220-frq4DrOGb9Fsyw02Dh0iDZO3r4fHbRJ2mq3kUm3V")
+                .setOAuthAccessTokenSecret("PQ9qGeX0mS1EJiaWp1alpqiIHX9zpfIDTZC765jUJ0Fiw");
+
+        TwitterFactory tf = new TwitterFactory(cb.build());
+        twitter = tf.getInstance();
+
+        service = new ToneAnalyzer(ToneAnalyzer.VERSION_DATE_2016_05_19);
+        service.setEndPoint("https://gateway.watsonplatform.net/tone-analyzer/api");
+        service.setUsernameAndPassword("4f41c873-5cd6-46ac-a159-becf87a5687f", "8uGOobS4Tozq");
+        List<Status> tweets = null;
+
+        String Hquery = "";
+        String Tquery = "";
+
+        Tsums = new HashMap<>();
+        Tcounts = new HashMap<>();
+        Hsums = new HashMap<>();
+        Hcounts = new HashMap<>();
+
+        getTweets(Tquery);
+        calcSumsAndAves(tweets, Tsums, Tcounts);
+        getTweets(Hquery);
+        calcSumsAndAves(tweets, Hsums, Hcounts);
+
+        Tavgs = new HashMap<>();
+        Tsums.forEach((k,v)->{
+            Double a = v/tweetcount;
+            Tavgs.put(k,a);
+        });
+
+        System.out.println("Trump:");
+        System.out.println("Average values:");
+        Tavgs.forEach((k,v)->{
+            System.out.println(k + ": " + Double.toString(v));
+        });
+        System.out.println("Counts:");
+        Tcounts.forEach((k,v)->{
+            System.out.println(k + ": " + Double.toString(v));
+        });
+
+        Havgs = new HashMap<>();
+        Hsums.forEach((k,v)->{
+            Double a = v/tweetcount;
+            Havgs.put(k,a);
+        });
+
+        System.out.println("Clinton:");
+        System.out.println("Average values:");
+        Havgs.forEach((k,v)->{
+            System.out.println(k + ": " + Double.toString(v));
+        });
+        System.out.println("Counts:");
+        Hcounts.forEach((k,v)->{
+            System.out.println(k + ": " + Double.toString(v));
+        });
+
+    }
+
 
 }
