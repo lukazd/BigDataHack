@@ -6,15 +6,21 @@ import com.ibm.watson.developer_cloud.tone_analyzer.v3.model.ToneCategory;
 import com.ibm.watson.developer_cloud.tone_analyzer.v3.model.ToneScore;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
-
-import java.util.DoubleSummaryStatistics;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class Main {
+public class Backend {
 
-    static void
+    static int tweetcount = 2;
+
+    static HashMap<String,Double> Hsums;
+    static HashMap<String,Integer> Hcounts;
+
+    static HashMap<String, Double> Tsums = new HashMap<>();
+    static HashMap<String,Integer> Tcounts = new HashMap<>();
+
+    static ToneAnalyzer service;
+
     public static void main(String[] args) throws TwitterException {
 
         ConfigurationBuilder cb = new ConfigurationBuilder();
@@ -28,10 +34,9 @@ public class Main {
         TwitterFactory tf = new TwitterFactory(cb.build());
         twitter4j.Twitter twitter = tf.getInstance();
 
-        ToneAnalyzer service = new ToneAnalyzer(ToneAnalyzer.VERSION_DATE_2016_05_19);
+        service = new ToneAnalyzer(ToneAnalyzer.VERSION_DATE_2016_05_19);
         service.setEndPoint("https://gateway.watsonplatform.net/tone-analyzer/api");
         service.setUsernameAndPassword("4f41c873-5cd6-46ac-a159-becf87a5687f", "8uGOobS4Tozq");
-        int tweetcount = 2;
         List<Status> tweets = null;
 
         try {
@@ -47,39 +52,9 @@ public class Main {
             System.exit(-1);
         }
 
-        HashMap<String,Double> Hsums;
-        HashMap<String,Integer> Hcounts;
+        calcSumsAndAves(tweets, Tsums, Tcounts);
+        calcSumsAndAves(tweets, Hsums, Hcounts);
 
-        HashMap<String, Double> Tsums = new HashMap<>();
-        HashMap<String,Integer> Tcounts = new HashMap<>();
-        for (Status tweet : tweets) {
-            String text = tweet.getText();
-            System.out.println("@" + tweet.getUser().getScreenName() + " - " + text);
-            ToneAnalysis tone = service.getTone(text, null).execute();
-
-            for (ToneCategory tc : tone.getDocumentTone().getTones()) {
-                for (ToneScore ts : tc.getTones()) {
-                    String n = ts.getName();
-                    Double s = ts.getScore();
-                    Double current = Tsums.get(n);
-
-                    if (current == null) {
-                        Tsums.put(n, s);
-                    } else {
-                        Tsums.put(n, s+current);
-                    }
-
-                    Integer cur = Tcounts.get(n);
-                    if (cur == null) {
-                        Tcounts.put(n,0);
-                        cur = 0;
-                    }
-                    if (s>.2) {
-                        Tcounts.put(n,cur+1);
-                    }
-                }
-            }
-        }
         HashMap<String,Double> Tavgs = new HashMap<>();
         Tsums.forEach((k,v)->{
             Double a = v/tweetcount;
@@ -93,5 +68,52 @@ public class Main {
         Tcounts.forEach((k,v)->{
             System.out.println(k + ": " + Double.toString(v));
         });
+
+        HashMap<String,Double> Havgs = new HashMap<>();
+        Hsums.forEach((k,v)->{
+            Double a = v/tweetcount;
+            Havgs.put(k,a);
+        });
+        System.out.println("Average values:");
+        Havgs.forEach((k,v)->{
+            System.out.println(k + ": " + Double.toString(v));
+        });
+        System.out.println("Counts:");
+        Hcounts.forEach((k,v)->{
+            System.out.println(k + ": " + Double.toString(v));
+        });
+
     }
+
+    static void calcSumsAndAves(List<Status> tweets, HashMap<String,Double> sums, HashMap<String,Integer> counts){
+        for (Status tweet : tweets) {
+            String text = tweet.getText();
+            System.out.println("@" + tweet.getUser().getScreenName() + " - " + text);
+            ToneAnalysis tone = service.getTone(text, null).execute();
+
+            for (ToneCategory tc : tone.getDocumentTone().getTones()) {
+                for (ToneScore ts : tc.getTones()) {
+                    String n = ts.getName();
+                    Double s = ts.getScore();
+                    Double current = sums.get(n);
+
+                    if (current == null) {
+                        sums.put(n, s);
+                    } else {
+                        sums.put(n, s+current);
+                    }
+
+                    Integer cur = counts.get(n);
+                    if (cur == null) {
+                        counts.put(n,0);
+                        cur = 0;
+                    }
+                    if (s>.2) {
+                        counts.put(n,cur+1);
+                    }
+                }
+            }
+        }
+    }
+
 }
