@@ -6,12 +6,26 @@ var $;
 var Chart; 
 var d3;
 
+var myFirebaseRef = new Firebase("https://twitterbicker.firebaseio.com/");
 window.onload = function(){
     Chart.defaults.global.tooltips = false;
     new barChart();
-    
- 
 };
+
+// Update the state of the sensor everytime that firebase updates 
+myFirebaseRef.child('Sensor').on('value', function(dataSnapshot) {
+    status = dataSnapshot.val();
+    if (status == false) {
+        $('#current-temperature-error').text("unplugged Sensor");
+        $('#current-temperature-error').show();
+        $('#current-temperature').hide();
+    } else {
+        initializeGraph();
+        $('#current-temperature').show();
+        $('#current-temperature-error').hide();
+    }
+});
+
 var candidates = {
     HILLARY : 0,
     TRUMP : 1,
@@ -28,7 +42,7 @@ var wordCloud = function(){
     $('#word-map').jQCloud(words, {
             autoResize: true,
             //shape: 'rectangular',
-            width: 1000,
+            width: 1500,
             height: 500
     });
 };
@@ -88,7 +102,8 @@ function changeTab(option){
         $('#radar-chart').css('display', 'block');
         new radarChart();
     } else {
-        $('#word-map').css('display', 'block');
+        //$('#word-map').css('display', 'block');
+        $('#word-map').fadeIn("slow");
         new wordCloud();
     }
     
