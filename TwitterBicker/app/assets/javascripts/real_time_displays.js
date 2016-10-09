@@ -10,6 +10,8 @@ var Firebase;
 var rChart;
 var bChart;
 var wCloud;
+//var asset_path_trump;
+//var asset_path_hillary;
 
 var myFirebaseRef = new Firebase("https://twitterbicker.firebaseio.com/");
 var candidates = {
@@ -35,11 +37,36 @@ myFirebaseRef.child('Trump').on('value', function(dataSnapshot) {
     console.log(dataSnapshot.val());
     
 });
-
 myFirebaseRef.child("AngerScore").on('value', function(dataSnapshot){
-    console.log("Anger score");
-    console.log(dataSnapshot.val());
-    bChart.update(dataSnapshot.val());
+    var newData = dataSnapshot.val();
+    bChart.update(newData);
+    var trumpImage = $("#trump-img");
+    var hillaryImage = $("#hillary-img");
+    
+    if(newData.Hillary >= 80){
+        trumpImage.attr('src', asset_path_trump[3]);
+    }
+    else if(newData.Hillary >= 70){
+     trumpImage.attr('src', asset_path_trump[2]);
+    }
+    else if(newData.Hillary >= 60){
+        trumpImage.attr('src', asset_path_trump[1]);
+    }
+    else{
+        trumpImage.attr('src', asset_path_trump[0]);
+    }
+    if(newData.Trump >= 80){
+        hillaryImage.attr('src', asset_path_hillary[3]);
+    }
+    else if(newData.Trump >= 70){
+     hillaryImage.attr('src', asset_path_hillary[2]);
+    }
+    else if(newData.Trump >= 60){
+        hillaryImage.attr('src', asset_path_hillary[1]);
+    }
+    else{
+        hillaryImage.attr('src', asset_path_hillary[0]);
+    }
     
 });
 myFirebaseRef.child("WordFrequency").on('value', function(dataSnapshot){
@@ -49,21 +76,16 @@ myFirebaseRef.child("WordFrequency").on('value', function(dataSnapshot){
     
     
 });
-
 myFirebaseRef.child('AngriestTweet').on('value', function(dataSnapshot) {
     var newData = dataSnapshot.val();
     $('#tweet').text(newData["Tweet"]);
     $('#user').text(newData["User"]);
 });
 
-
 var wordCloud = function(){
     this.created = false;
     this.wordCloudDiv = $('#word-map');
-    this.data = [{text: "Lorem", weight: 13}, {text: "Lorem", weight: 13}];
-    console.log(this.data);
-    
-             
+    this.data = [];
 };
 wordCloud.prototype.create = function(){
     this.created = true;
@@ -75,6 +97,7 @@ wordCloud.prototype.create = function(){
     });
 };
 wordCloud.prototype.update = function(newData){
+    this.data = [];
     for(var key in newData){
         if(newData.hasOwnProperty(key)){
             console.log(key + " -> " + newData[key]);
@@ -85,9 +108,6 @@ wordCloud.prototype.update = function(newData){
     if(this.created){
         this.wordCloudDiv.jQCloud('update', this.data);
     }
-    console.log(this.data);
-    
-    
 };
 var radarChart = function(){
     this.hillaryData = [];
@@ -103,7 +123,7 @@ radarChart.prototype.create = function(){
             {
                 label: "Hillary",
                 backgroundColor: "rgba(0,0,255,0.2)",
-                borderColor: "rgba(179,181,198,1)",
+                borderColor: "rgba(0,0,255,1)",
                 pointBackgroundColor: "rgba(179,181,198,1)",
                 pointBorderColor: "#fff",
                 pointHoverBackgroundColor: "#fff",
@@ -112,9 +132,9 @@ radarChart.prototype.create = function(){
             },
             {
                 label: "Trump",
-                backgroundColor: "rgba(255,99,132,0.2)",
-                borderColor: "rgba(255,99,132,1)",
-                pointBackgroundColor: "rgba(255,99,132,1)",
+                backgroundColor: "rgba(255,0,0,0.2)",
+                borderColor: "rgba(255,0,0,1)",
+                pointBackgroundColor: "rgba(255,0,0,1)",
                 pointBorderColor: "#fff",
                 pointHoverBackgroundColor: "#fff",
                 pointHoverBorderColor: "rgba(255,99,132,1)",
@@ -208,8 +228,6 @@ barChart.prototype.update = function(newData){
     this.trumpData[0] = newData.Trump;
     this.hillaryData[0] = newData.Hillary;
     if(this.trumpChart && this.hillaryChart){
-        console.log("trump data: " + this.trumpData);
-        
         this.trumpChart.update();
         this.hillaryChart.update();
     }
@@ -217,7 +235,6 @@ barChart.prototype.update = function(newData){
     this.trumpChart = bChart.create(candidates.TRUMP);
     this.hillaryChart = bChart.create(candidates.HILLARY);
     }
-    console.log("update data");
 };
 function changeTab(option){
     $('#ratio-charts').css('display', 'none');
