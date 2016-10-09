@@ -14,9 +14,10 @@ package com.company;
 
 public class Main {
 
-    static int tweetcount = 20;
+    static int tweetcount = 5;
     static int secondsDelay = 5;
-    static int loopcount = 1;
+    static int loopcount = 2;
+    static int minutes_to_run = 5;
 
     static HashMap<String, Double> Hsums;
     static HashMap<String, Integer> Hcounts;
@@ -98,9 +99,10 @@ public class Main {
         for (Status t : tweets) {
             String text = t.getText();
             text = text.toUpperCase();
-            String[] w = text.split(" ");
+            String[] w = text.replaceAll("[^a-zA-Z ]", "").toLowerCase().split("\\s+");
             List<String> words = Arrays.asList(w);
             for (String word : words) {
+
                 if (word.length() > 3) {
                     if (dict.containsKey(word)) {
                         Integer count = (Integer) dict.get(word);
@@ -131,11 +133,12 @@ public class Main {
         service.setUsernameAndPassword("4f41c873-5cd6-46ac-a159-becf87a5687f", "8uGOobS4Tozq");
         tweets = null;
 
-        String Hquery = "imwithher";
-        String Tquery = "americafirst";
+        String Hquery = "imwithher%20strongertogether";
+        String Tquery = "americafirst%20neverhillary";
 
         iterations = 0;
         runavg_Tanger = 0;
+        long start_time = System.currentTimeMillis();
         while (true) {
 
             Tsums = new HashMap<>();
@@ -185,10 +188,17 @@ public class Main {
 
             PushData pushData = new PushData();
 
-            Double totalangry = (double) (Tcounts.get("Anger") + Hcounts.get("Anger"));
+            double hanger = (double) Hcounts.get("Anger");
+            double hdisgust = (double) Hcounts.get("Disgust");
+            double h_angerdisgust = hanger + hdisgust;
+            double tanger = (double) Tcounts.get("Anger");
+            double tdisgust = (double) Tcounts.get("Disgust");
+            double t_angerdisgust = tanger + tdisgust;
+            Double totalangry = h_angerdisgust + t_angerdisgust;
+
             if(totalangry != 0) {
-                double hillaryangry = Hcounts.get("Anger") / totalangry;
-                double trumpangry = Tcounts.get("Anger") / totalangry;
+                double hillaryangry = h_angerdisgust / totalangry;
+                double trumpangry = t_angerdisgust / totalangry;
                 int percent_trump = (int) (trumpangry*100);
                 int percent_hillary = (int) (hillaryangry*100);
                 runavg_Tanger = ( (runavg_Tanger*iterations + percent_trump) / (iterations + 1) );
@@ -218,11 +228,9 @@ public class Main {
             TSocial.put("Openness", Tcounts.get("Openness"));
             pushData.updateSocialTendencies(PushData.Candidate.TRUMP, TSocial);
 
-            iterations++;
-            if (iterations >= loopcount) {
-                pushData.destroyConnection();
-                System.exit(0);
-            }
+            System.out.println("Wordcounts size:");
+            System.out.println(wordcounts.size());
+
 
             try {
                 Thread.sleep(secondsDelay*1000);
@@ -230,6 +238,13 @@ public class Main {
                 e.printStackTrace();
                 System.exit(-1);
             }
+
+            iterations++;
+            if (iterations >= loopcount || (System.currentTimeMillis()-start_time > minutes_to_run*60*1000)) {
+                pushData.destroyConnection();
+                System.exit(0);
+            }
+
         }
     }
 }
