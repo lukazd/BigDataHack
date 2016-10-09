@@ -10,6 +10,8 @@ var Firebase;
 var rChart;
 var bChart;
 var wCloud;
+//var asset_path_trump;
+//var asset_path_hillary;
 
 var myFirebaseRef = new Firebase("https://twitterbicker.firebaseio.com/");
 var candidates = {
@@ -36,9 +38,35 @@ myFirebaseRef.child('Trump').on('value', function(dataSnapshot) {
     
 });
 myFirebaseRef.child("AngerScore").on('value', function(dataSnapshot){
-    console.log("Anger score");
-    console.log(dataSnapshot.val());
-    bChart.update(dataSnapshot.val());
+    var newData = dataSnapshot.val();
+    bChart.update(newData);
+    var trumpImage = $("#trump-img");
+    var hillaryImage = $("#hillary-img");
+    
+    if(newData.Hillary >= 80){
+        trumpImage.attr('src', asset_path_trump[3]);
+    }
+    else if(newData.Hillary >= 70){
+     trumpImage.attr('src', asset_path_trump[2]);
+    }
+    else if(newData.Hillary >= 60){
+        trumpImage.attr('src', asset_path_trump[1]);
+    }
+    else{
+        trumpImage.attr('src', asset_path_trump[0]);
+    }
+    if(newData.Trump >= 80){
+        hillaryImage.attr('src', asset_path_hillary[3]);
+    }
+    else if(newData.Trump >= 70){
+     hillaryImage.attr('src', asset_path_hillary[2]);
+    }
+    else if(newData.Trump >= 60){
+        hillaryImage.attr('src', asset_path_hillary[1]);
+    }
+    else{
+        hillaryImage.attr('src', asset_path_hillary[0]);
+    }
     
 });
 myFirebaseRef.child("WordFrequency").on('value', function(dataSnapshot){
