@@ -6,13 +6,17 @@ package com.company;
         import com.ibm.watson.developer_cloud.tone_analyzer.v3.model.ToneScore;
         import twitter4j.*;
         import twitter4j.conf.ConfigurationBuilder;
+
+        import java.util.Arrays;
         import java.util.HashMap;
         import java.util.List;
+        import java.util.Objects;
 
 public class Main {
 
-    static int tweetcount = 2;
+    static int tweetcount = 20;
     static int secondsDelay = 5;
+    static int loopcount = 3;
 
     static HashMap<String, Double> Hsums;
     static HashMap<String, Integer> Hcounts;
@@ -25,6 +29,8 @@ public class Main {
     static ToneAnalyzer service;
     static List<Status> tweets;
     static Status angriest_tweet;
+
+    static HashMap<String, Object> wordcounts;
 
     static int iterations;
     static int runavg_Tanger;
@@ -86,11 +92,22 @@ public class Main {
         }
     }
 
-    static void updateWordCounts(HashMap<String,Integer> dict) {
+    static void updateWordCounts(HashMap<String,Object> dict) {
         for (Status t : tweets) {
             String text = t.getText();
             text = text.toUpperCase();
-
+            String[] w = text.split(" ");
+            List<String> words = Arrays.asList(w);
+            for (String word : words) {
+                if (word.length() > 3) {
+                    if (dict.containsKey(word)) {
+                        Integer count = (Integer) dict.get(word);
+                        dict.put(word, count+1);
+                    } else {
+                        dict.put(word, 1);
+                    }
+                }
+            }
         }
     }
 
@@ -118,17 +135,19 @@ public class Main {
         iterations = 0;
         runavg_Tanger = 0;
         while (true) {
-            iterations++;
 
             Tsums = new HashMap<>();
             Tcounts = new HashMap<>();
             Hsums = new HashMap<>();
             Hcounts = new HashMap<>();
+            wordcounts = new HashMap<>();
 
             setTweets(Tquery);
             calcSumsAndAves(tweets, Tsums, Tcounts);
+            updateWordCounts(wordcounts);
             setTweets(Hquery);
             calcSumsAndAves(tweets, Hsums, Hcounts);
+            updateWordCounts(wordcounts);
 
             Tavgs = new HashMap<>();
             Tsums.forEach((k, v) -> {
@@ -166,16 +185,20 @@ public class Main {
 
             int totalangry = Tcounts.get("Anger") + Hcounts.get("Anger");
             if(totalangry != 0) {
-                int hillaryangry = Hcounts.get("Anger") / totalangry;
-                int trumpangry = Tcounts.get("Anger") / totalangry;
-                runavg_Tanger = ( (runavg_Tanger*iterations + trumpangry) / (iterations + 1) );
+                double hillaryangry = Hcounts.get("Anger") / totalangry;
+                double trumpangry = Tcounts.get("Anger") / totalangry;
+                int percent_trump = (int) trumpangry*100;
+                int percent_hillary = (int) hillaryangry*100;
+                runavg_Tanger = ( (runavg_Tanger*iterations + percent_trump) / (iterations + 1) );
                 System.out.println(hillaryangry + " : " + trumpangry);
-                pushData.updateAngryTweets(hillaryangry, trumpangry);
+                pushData.updateAngryTweets(percent_hillary, percent_trump);
             } else {
+                pushData.updateAngryTweets(0,0);
                 System.out.println("No angry tweets");
             }
 
-            pushData.updateAngriestTweet(angriest_tweet.getUser().toString(),angriest_tweet.getText());
+            pushData.updateAngriestTweet(angriest_tweet.getUser().getScreenName(),angriest_tweet.getText());
+            pushData.updateMostUsedWords(wordcounts);
 
             HashMap<String, Object> HSocial = new HashMap<>();
             HSocial.put("Agreeableness", Hcounts.get("Agreeableness"));
@@ -193,7 +216,8 @@ public class Main {
             TSocial.put("Openness", Tcounts.get("Openness"));
             pushData.updateSocialTendencies(PushData.Candidate.TRUMP, TSocial);
 
-            if (iterations > 4) {
+            iterations++;
+            if (iterations > loopcount) {
                 pushData.destroyConnection();
                 System.exit(0);
             }
