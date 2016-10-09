@@ -26,11 +26,8 @@ public class Main {
     static twitter4j.Twitter twitter;
     static ToneAnalyzer service;
     static List<Status> tweets;
-    static String HAngriestTweet;
-    static String TAngriestTweet;
-    static String HAngriestUser;
-    static String TAngriestUser;
-
+    static Status angriest_tweet;
+    static HashMap<String, Integer> wordcounts;
 
     static void setTweets(String q) {
         try {
@@ -48,8 +45,11 @@ public class Main {
 
     }
 
-    //TODO: find angriest tweet
     static void calcSumsAndAves(List<Status> tweets, HashMap<String, Double> sums, HashMap<String, Integer> counts) {
+        Double max_anger = 0.0;
+        Double oa = sums.get("Anger");
+        Double old_anger = (oa == null) ? 0.0 : oa;
+
         for (Status tweet : tweets) {
             String text = tweet.getText();
             System.out.println("@" + tweet.getUser().getScreenName() + " - " + text);
@@ -77,6 +77,13 @@ public class Main {
                     }
                 }
             }
+            Double new_anger = sums.get("Anger");
+            Double d = new_anger - old_anger
+            if (d > max_anger) {
+                max_anger = d;
+                angriest_tweet = tweet;
+            }
+
         }
     }
 
@@ -96,7 +103,7 @@ public class Main {
         }
         return tweets;
     }
-
+    
     public static void main(String[] args) throws TwitterException {
 
         ConfigurationBuilder cb = new ConfigurationBuilder();
@@ -188,5 +195,13 @@ public class Main {
         TSocial.put("Openness", Tcounts.get("Openness"));
         pushData.updateSocialTendencies(PushData.Candidate.TRUMP, TSocial);
 
+        pushData.updateAngriestTweet(angriest_tweet.getUser().toString(),angriest_tweet.getText());
+
+        int Hangry = Hcounts.get("Anger");
+        int Tangry = Tcounts.get("Anger"):
+        int total = Hangry + Tangry;
+        double Hpercent = Hangry/total;
+        double Tpercent = Tangry/total;
+        pushData.updateAngryTweets((int) (Hpercent + 0.5),(int) (Tpercent + 0.5));
     }
 }
