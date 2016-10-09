@@ -56,7 +56,7 @@ public class PushData {
         fb.child("AngriestTweet").updateChildren(angriestTweet);
     }
     public void updateMostUsedWords(HashMap<String, Object> wordFrequency) {
-        fb.child("WordFrequency").updateChildren(wordFrequency);
+        fb.child("WordFrequency").setValue(wordFrequency);
     }
     public void destroyConnection(){
         fb.goOffline();
