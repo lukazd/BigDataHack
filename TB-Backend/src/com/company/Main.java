@@ -7,13 +7,15 @@ import com.ibm.watson.developer_cloud.tone_analyzer.v3.model.ToneScore;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 
+import java.util.DoubleSummaryStatistics;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Main {
 
 
-    public static void main(String[] args) throws TwitterException, {
+    public static void main(String[] args) throws TwitterException {
 
         ConfigurationBuilder cb = new ConfigurationBuilder();
 
@@ -29,7 +31,7 @@ public class Main {
         ToneAnalyzer service = new ToneAnalyzer(ToneAnalyzer.VERSION_DATE_2016_05_19);
         service.setEndPoint("https://gateway.watsonplatform.net/tone-analyzer/api");
         service.setUsernameAndPassword("4f41c873-5cd6-46ac-a159-becf87a5687f", "8uGOobS4Tozq");
-        int tweetcount = 1;
+        int tweetcount = 2;
         List<Status> tweets = null;
 
         try {
@@ -44,7 +46,6 @@ public class Main {
             System.out.println("Failed to search tweets: " + te.getMessage());
             System.exit(-1);
         }
-
 
         HashMap<String,Double> Hsums;
         HashMap<String,Integer> Hcounts;
@@ -79,7 +80,18 @@ public class Main {
                 }
             }
         }
-
-
+        HashMap<String,Double> Tavgs = new HashMap<>();
+        Tsums.forEach((k,v)->{
+            Double a = v/tweetcount;
+            Tavgs.put(k,a);
+        });
+        System.out.println("Average values:");
+        Tavgs.forEach((k,v)->{
+            System.out.println(k + ": " + Double.toString(v));
+        });
+        System.out.println("Counts:");
+        Tcounts.forEach((k,v)->{
+            System.out.println(k + ": " + Double.toString(v));
+        });
     }
 }
