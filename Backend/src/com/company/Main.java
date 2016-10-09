@@ -176,16 +176,16 @@ public class Main {
         HSocial.put("Agreeableness", Hcounts.get("Agreeableness"));
         HSocial.put("Conscientiousness", Hcounts.get("Conscientiousness"));
         HSocial.put("Emotional Range", Hcounts.get("Emotional Range"));
-        HSocial.put("Extraversion", Hcounts.get("Openness"));
-        HSocial.put("Openness", Hcounts.get("Agreeableness"));
+        HSocial.put("Extraversion", Hcounts.get("Extraversion"));
+        HSocial.put("Openness", Hcounts.get("Openness"));
         pushData.updateSocialTendencies(PushData.Candidate.HILLARY, HSocial);
 
         HashMap<String, Object> TSocial = new HashMap<>();
         TSocial.put("Agreeableness", Tcounts.get("Agreeableness"));
         TSocial.put("Conscientiousness", Tcounts.get("Conscientiousness"));
         TSocial.put("Emotional Range", Tcounts.get("Emotional Range"));
-        TSocial.put("Extraversion", Tcounts.get("Openness"));
-        TSocial.put("Openness", Tcounts.get("Agreeableness"));
+        TSocial.put("Extraversion", Tcounts.get("Extraversion"));
+        TSocial.put("Openness", Tcounts.get("Openness"));
         pushData.updateSocialTendencies(PushData.Candidate.TRUMP, TSocial);
 
     }
