@@ -7,6 +7,7 @@ var Chart;
 var d3;
 var Firebase;
 
+var rChart;
 var myFirebaseRef = new Firebase("https://twitterbicker.firebaseio.com/");
 var candidates = {
     HILLARY : 0,
@@ -15,12 +16,16 @@ var candidates = {
 window.onload = function(){
     Chart.defaults.global.tooltips = false;
     var bChart = new barChart();
+    rChart = new radarChart();
     bChart.trumpChart = bChart.create(candidates.TRUMP);
     bChart.hillaryChart = bChart.create(candidates.HILLARY);
 };
 // Update the state of the sensor everytime that firebase updates 
 myFirebaseRef.child('Hillary').on('value', function(dataSnapshot) {
+    var newData = dataSnapshot.val();
+    rChart.update(newData, true);
     console.log(dataSnapshot.val());
+    
 });
 var wordCloud = function(){
     this.wordCloudDiv = $('#word-map');
@@ -44,12 +49,13 @@ wordCloud.prototype.update = function(){
     
 };
 var radarChart = function(){
-    this.hillaryData = [65, 59, 90, 81, 56];
-    this.trumpData = [28, 48, 40, 19, 96];
+    this.hillaryData = [];
+    this.trumpData = [0, 100, 60, 40, 20];
     this.radarDiv = $("#radar-chart-trump-hillary");
     this.radarChart = null;
 };
 radarChart.prototype.create = function(){
+    console.log(this.hillaryData);
     var data = {
         labels: ["Emotional Range", "Openness", "Conscientiousness", "Extraversion", "Agreeableness"],
         datasets: [
@@ -81,7 +87,25 @@ radarChart.prototype.create = function(){
     });
     return myRadarChart;
 };
-radarChart.prototype.update = function(){
+radarChart.prototype.update = function(newData, isHillary){
+    console.log("update");
+   if(isHillary){
+    this.hillaryData[0] = newData.Agreeableness;
+    this.hillaryData[1] = newData.Conscientiousness;
+    this.hillaryData[2] = newData["Emotional Range"];
+    this.hillaryData[3] = newData.Openness;
+    console.log(this.hillaryData);
+    if(this.radarChart){
+        console.log("can update");
+        this.radarChart.update();
+    }
+    else{
+        console.log("cant update");
+    }
+   }
+   else{
+       
+   }
     
 };
 var barChart = function(){
@@ -157,7 +181,6 @@ function changeTab(option){
         
     } else if (option === "Radar") {
         $('#radar-chart').css('display', 'block');
-        var rChart = new radarChart();
         rChart.radarChart = rChart.create();
     } else {
         $('#word-map').fadeIn("slow");
