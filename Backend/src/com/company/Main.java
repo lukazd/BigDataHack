@@ -30,7 +30,6 @@ public class Main {
     static int iterations;
     static int run_avg_Tanger;
 
-
     static void setTweets(String q) {
         try {
             Query query = new Query(q);
@@ -44,7 +43,6 @@ public class Main {
             System.out.println("Failed to search tweets: " + te.getMessage());
             System.exit(-1);
         }
-
     }
 
     static void calcSumsAndAves(List<Status> tweets, HashMap<String, Double> sums, HashMap<String, Integer> counts) {
@@ -89,22 +87,7 @@ public class Main {
         }
     }
 
-    static List<Status> getTweets(String q) {
-        List<Status> tweets = null;
-        try {
-            Query query = new Query(q);
-            query.count(tweetcount);
-            QueryResult result;
-            result = twitter.search(query);
-            tweets = result.getTweets();
-
-        } catch (TwitterException te) {
-            te.printStackTrace();
-            System.out.println("Failed to search tweets: " + te.getMessage());
-            System.exit(-1);
-        }
-        return tweets;
-    }
+    static updateWordCounts(HashMap<String,Integer> dict, )
 
     public static void main(String[] args) throws TwitterException {
 
