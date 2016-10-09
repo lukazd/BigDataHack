@@ -10,6 +10,7 @@ var Firebase;
 var rChart;
 var bChart;
 var wCloud;
+
 var myFirebaseRef = new Firebase("https://twitterbicker.firebaseio.com/");
 var candidates = {
     HILLARY : 0,
@@ -21,14 +22,11 @@ window.onload = function(){
     bChart = new barChart();
     rChart = new radarChart();
     wCloud = new wordCloud();
-    bChart.trumpChart = bChart.create(candidates.TRUMP);
-    bChart.hillaryChart = bChart.create(candidates.HILLARY);
 };
 // Update the state of the sensor everytime that firebase updates 
 myFirebaseRef.child('Hillary').on('value', function(dataSnapshot) {
     var newData = dataSnapshot.val();
     rChart.update(newData, true);
-    console.log(dataSnapshot.val());
     
 });
 myFirebaseRef.child('Trump').on('value', function(dataSnapshot) {
@@ -37,7 +35,12 @@ myFirebaseRef.child('Trump').on('value', function(dataSnapshot) {
     console.log(dataSnapshot.val());
     
 });
-
+myFirebaseRef.child("AngerScore").on('value', function(dataSnapshot){
+    console.log("Anger score");
+    console.log(dataSnapshot.val());
+    bChart.update(dataSnapshot.val());
+    
+});
 var wordCloud = function(){
     this.wordCloudDiv = $('#word-map');
     this.data = [{text: "Lorem", weight: 13},
@@ -99,32 +102,34 @@ radarChart.prototype.create = function(){
     return myRadarChart;
 };
 radarChart.prototype.update = function(newData, isHillary){
-   var tempData = [newData["Emotional Range"], newData.Openness, newData.Conscientiousness, newData.Extraversion, newData.Agreeableness];
    if(isHillary){
-    this.hillaryData = tempData;
-   }
+        this.hillaryData[0] = newData["Emotional Range"];
+        this.hillaryData[1] = newData["Openness"];
+        this.hillaryData[2] = newData["Conscientiousness"];
+        this.hillaryData[3] = newData["Extraversion"];
+        this.hillaryData[4] = newData["Agreeableness"];
+    }
    else{
-       this.trumpData = tempData;
+        this.trumpData[0] = newData["Emotional Range"];
+        this.trumpData[1] = newData["Openness"];
+        this.trumpData[2] = newData["Conscientiousness"];
+        this.trumpData[3] = newData["Extraversion"];
+        this.trumpData[4] = newData["Agreeableness"];
    }
    if(this.radarChart){
-        console.log("can update");
         this.radarChart.update();
-       
-   }
-   else{
-       console.log("can't update");
-   }
-    
+    }
 };
 var barChart = function(){
-    this.trumpData = 100;
-    this.hillaryData = 50;
+    this.trumpData = [];
+    this.hillaryData = [];
     this.trumpDiv = $("#ratio-chart-trump");
     this.hillaryDiv = $("#ratio-chart-hillary");
     this.trumpChart = null;
     this.hillaryChart = null;
 };
 barChart.prototype.create = function(candidate){
+    
     console.log("create");
     // getting rid of the top legend
     Chart.defaults.global.defaultFontSize = 20;
@@ -147,7 +152,7 @@ barChart.prototype.create = function(candidate){
         labels: [data],
         datasets: [{
             label: data,
-            data: [data],
+            data: data,
             backgroundColor: [color],
         }]
     },
@@ -172,9 +177,21 @@ barChart.prototype.create = function(candidate){
     }});
     return barChart;
 };
-barChart.prototype.update = function(){
-//   this.trumpBarChart.updateChart();
-//   this.hillaryBarChart.updateChart();
+barChart.prototype.update = function(newData){
+    this.trumpData[0] = newData.Trump;
+    this.hillaryData[0] = newData.Hillary;
+    if(this.trumpChart && this.hillaryChart){
+        console.log("trump data: " + this.trumpData);
+        
+        
+        this.trumpChart.update();
+        this.hillaryChart.update();
+    }
+    else{
+    this.trumpChart = bChart.create(candidates.TRUMP);
+    this.hillaryChart = bChart.create(candidates.HILLARY);
+    }
+    console.log("update data");
 };
 function changeTab(option){
     $('#ratio-charts').css('display', 'none');
