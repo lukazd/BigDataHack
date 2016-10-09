@@ -125,7 +125,6 @@ barChart.prototype.create = function(candidate){
                     display : false
                 },
             }]
-            
         }
     }});
     return barChart;
