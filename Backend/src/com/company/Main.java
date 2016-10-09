@@ -162,7 +162,6 @@ public class Main {
 
         PushData pushData = new PushData();
 
-        //TODO: calculate fractions of angry tweets for Hillary and Trump
         int totalangry = Tcounts.get("Anger") + Hcounts.get("Anger");
         if(totalangry != 0) {
             int hillaryangry = Hcounts.get("Anger") / totalangry;
@@ -172,5 +171,22 @@ public class Main {
         } else {
             System.out.println("No angry tweets");
         }
+
+        HashMap<String, Object> HSocial = new HashMap<>();
+        HSocial.put("Agreeableness", Hcounts.get("Agreeableness"));
+        HSocial.put("Conscientiousness", Hcounts.get("Conscientiousness"));
+        HSocial.put("Emotional Range", Hcounts.get("Emotional Range"));
+        HSocial.put("Extraversion", Hcounts.get("Openness"));
+        HSocial.put("Openness", Hcounts.get("Agreeableness"));
+        pushData.updateSocialTendencies(PushData.Candidate.HILLARY, HSocial);
+
+        HashMap<String, Object> TSocial = new HashMap<>();
+        TSocial.put("Agreeableness", Tcounts.get("Agreeableness"));
+        TSocial.put("Conscientiousness", Tcounts.get("Conscientiousness"));
+        TSocial.put("Emotional Range", Tcounts.get("Emotional Range"));
+        TSocial.put("Extraversion", Tcounts.get("Openness"));
+        TSocial.put("Openness", Tcounts.get("Agreeableness"));
+        pushData.updateSocialTendencies(PushData.Candidate.TRUMP, TSocial);
+
     }
 }
