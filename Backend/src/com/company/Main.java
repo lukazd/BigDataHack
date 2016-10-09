@@ -37,6 +37,8 @@ public class Main {
     static HashMap<String, Double> h_soc_avgs;
     static HashMap<String, Double> t_soc_avgs;
 
+    static double max_anger;
+
     static void setTweets(String q) {
         try {
             Query query = new Query(q);
@@ -54,7 +56,6 @@ public class Main {
     }
 
     static void calcSumsAndAves(List<Status> tweets, HashMap<String, Double> sums, HashMap<String, Integer> counts) {
-        Double max_anger = 0.0;
         Double oa = sums.get("Anger");
         Double old_anger = (oa == null) ? 0.0 : oa;
 
@@ -147,6 +148,7 @@ public class Main {
             Hcounts = new HashMap<>();
             wordcounts = new HashMap<>();
 
+            max_anger = 0.0;
             setTweets(Tquery);
             calcSumsAndAves(tweets, Tsums, Tcounts);
             updateWordCounts(wordcounts);
