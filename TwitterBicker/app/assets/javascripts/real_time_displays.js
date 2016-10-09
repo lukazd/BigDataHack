@@ -5,58 +5,68 @@
 var $;
 var Chart; 
 var d3;
-
+var Firebase;
+// objects we need
+var rChart;
+var bChart;
+var wCloud;
 var myFirebaseRef = new Firebase("https://twitterbicker.firebaseio.com/");
-window.onload = function(){
-    Chart.defaults.global.tooltips = false;
-    new barChart();
-};
-
-// Update the state of the sensor everytime that firebase updates 
-myFirebaseRef.child('Sensor').on('value', function(dataSnapshot) {
-    status = dataSnapshot.val();
-    if (status == false) {
-        $('#current-temperature-error').text("unplugged Sensor");
-        $('#current-temperature-error').show();
-        $('#current-temperature').hide();
-    } else {
-        initializeGraph();
-        $('#current-temperature').show();
-        $('#current-temperature-error').hide();
-    }
-});
-
 var candidates = {
     HILLARY : 0,
     TRUMP : 1,
 };
+window.onload = function(){
+    Chart.defaults.global.tooltips = false;
+    // construct all objects on load
+    bChart = new barChart();
+    rChart = new radarChart();
+    wCloud = new wordCloud();
+    bChart.trumpChart = bChart.create(candidates.TRUMP);
+    bChart.hillaryChart = bChart.create(candidates.HILLARY);
+};
+// Update the state of the sensor everytime that firebase updates 
+myFirebaseRef.child('Hillary').on('value', function(dataSnapshot) {
+    var newData = dataSnapshot.val();
+    rChart.update(newData, true);
+    console.log(dataSnapshot.val());
+    
+});
+myFirebaseRef.child('Trump').on('value', function(dataSnapshot) {
+    var newData = dataSnapshot.val();
+    rChart.update(newData, false);
+    console.log(dataSnapshot.val());
+    
+});
+
 var wordCloud = function(){
-    console.log("word cloud");
-    var words = [{text: "Lorem", weight: 13},
+    this.wordCloudDiv = $('#word-map');
+    this.data = [{text: "Lorem", weight: 13},
                 {text: "Ipsum", weight: 10.5},
                 {text: "Dolor", weight: 9.4},
                 {text: "Sit", weight: 8},
                 {text: "Amet", weight: 6.2},
                 {text: "Consectetur", weight: 5},
                 {text: "Adipiscing", weight: 5}];
-    $('#word-map').jQCloud(words, {
+};
+wordCloud.prototype.create = function(){
+    this.wordCloudDiv.jQCloud(this.data, {
             autoResize: true,
             //shape: 'rectangular',
             width: 1500,
             height: 500
     });
 };
-wordCloud.prototype.create = function(){
-    
-};
 wordCloud.prototype.update = function(){
     
 };
 var radarChart = function(){
+    this.hillaryData = [];
+    this.trumpData = [];
     this.radarDiv = $("#radar-chart-trump-hillary");
-    this.radarChart = this.createRadarChart();
+    this.radarChart = null;
 };
-radarChart.prototype.createRadarChart = function(){
+radarChart.prototype.create = function(){
+    console.log(this.hillaryData);
     var data = {
         labels: ["Emotional Range", "Openness", "Conscientiousness", "Extraversion", "Agreeableness"],
         datasets: [
@@ -68,7 +78,7 @@ radarChart.prototype.createRadarChart = function(){
                 pointBorderColor: "#fff",
                 pointHoverBackgroundColor: "#fff",
                 pointHoverBorderColor: "rgba(179,181,198,1)",
-                data: [65, 59, 90, 81, 56]
+                data: this.hillaryData
             },
             {
                 label: "Trump",
@@ -78,7 +88,7 @@ radarChart.prototype.createRadarChart = function(){
                 pointBorderColor: "#fff",
                 pointHoverBackgroundColor: "#fff",
                 pointHoverBorderColor: "rgba(255,99,132,1)",
-                data: [28, 48, 40, 19, 96]
+                data: this.trumpData
             }
         ]
     };
@@ -88,35 +98,34 @@ radarChart.prototype.createRadarChart = function(){
     });
     return myRadarChart;
 };
-
-function changeTab(option){
-    $('#ratio-charts').css('display', 'none');
-    $('#radar-chart').css('display', 'none');
-    $('#word-map').css('display', 'none');
+radarChart.prototype.update = function(newData, isHillary){
+   var tempData = [newData["Emotional Range"], newData.Openness, newData.Conscientiousness, newData.Extraversion, newData.Agreeableness];
+   if(isHillary){
+    this.hillaryData = tempData;
+   }
+   else{
+       this.trumpData = tempData;
+   }
+   if(this.radarChart){
+        console.log("can update");
+        this.radarChart.update();
+       
+   }
+   else{
+       console.log("can't update");
+   }
     
-    if (option === "Ratio") {
-        $('#ratio-charts').css('display', 'block');
-        new barChart();
-        
-    } else if (option === "Radar") {
-        $('#radar-chart').css('display', 'block');
-        new radarChart();
-    } else {
-        //$('#word-map').css('display', 'block');
-        $('#word-map').fadeIn("slow");
-        new wordCloud();
-    }
-    
-    return false;
 };
 var barChart = function(){
+    this.trumpData = 100;
+    this.hillaryData = 50;
     this.trumpDiv = $("#ratio-chart-trump");
     this.hillaryDiv = $("#ratio-chart-hillary");
-    // create the chart
-    this.trumpBarChart = this.createBarChart(candidates.TRUMP);
-    this.hillaryBarChart = this.createBarChart(candidates.HILLARY);
+    this.trumpChart = null;
+    this.hillaryChart = null;
 };
-barChart.prototype.createBarChart = function(candidate){
+barChart.prototype.create = function(candidate){
+    console.log("create");
     // getting rid of the top legend
     Chart.defaults.global.defaultFontSize = 20;
     var maxData = 100;
@@ -125,12 +134,12 @@ barChart.prototype.createBarChart = function(candidate){
     if(candidate == 0){
         candidateEl = this.hillaryDiv;
         color = 'rgba(0, 0, 255, 1)';
-        data = 20;
+        data = this.hillaryData;
     }
     else{
         candidateEl = this.trumpDiv;
         color = 'rgba(255, 0, 0, 1)';
-        data = 100;
+        data = this.trumpData;
     }
     var barChart = new Chart(candidateEl, {
     type: 'bar',
@@ -163,7 +172,26 @@ barChart.prototype.createBarChart = function(candidate){
     }});
     return barChart;
 };
-barChart.prototype.updateChart = function(){
-   this.trumpBarChart.updateChart();
-   this.hillaryBarChart.updateChart();
+barChart.prototype.update = function(){
+//   this.trumpBarChart.updateChart();
+//   this.hillaryBarChart.updateChart();
+};
+function changeTab(option){
+    $('#ratio-charts').css('display', 'none');
+    $('#radar-chart').css('display', 'none');
+    $('#word-map').css('display', 'none');
+    
+    if (option === "Ratio") {
+        $('#ratio-charts').css('display', 'block');
+        bChart.hillaryChart = bChart.create(candidates.TRUMP);
+        bChart.trumpChart = bChart.create(candidates.HILLARY);
+        
+    } else if (option === "Radar") {
+        $('#radar-chart').css('display', 'block');
+        rChart.radarChart = rChart.create();
+    } else {
+        $('#word-map').fadeIn("slow");
+        wCloud.create();
+    }
+    return false;
 };
