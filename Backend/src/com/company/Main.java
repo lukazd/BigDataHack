@@ -13,9 +13,9 @@ package com.company;
 
 public class Main {
 
-    static int tweetcount = 5;
-    static int secondsDelay = 60;
-    static int loopcount = 1;
+    static int tweetcount = 10;
+    static int secondsDelay = 20;
+    static int loopcount = 2;
     static int minutes_to_run = 5;
 
     static HashMap<String, Double> Hsums;
@@ -41,7 +41,7 @@ public class Main {
         try {
             Query query = new Query(q);
             query.count(tweetcount);
-            query.resultType(Query.ResultType.popular);
+            query.resultType(Query.ResultType.recent);
             QueryResult result;
             result = twitter.search(query);
             tweets = result.getTweets();
@@ -80,7 +80,7 @@ public class Main {
                         counts.put(n, 0);
                         cur = 0;
                     }
-                    if (s > .2) {
+                    if (s > .1) {
                         counts.put(n, cur + 1);
                     }
                 }
@@ -133,8 +133,8 @@ public class Main {
         service.setUsernameAndPassword("4f41c873-5cd6-46ac-a159-becf87a5687f", "8uGOobS4Tozq");
         tweets = null;
 
-        String Hquery = "imwithher%20strongertogether%20-americafirst%20-neverhillary";
-        String Tquery = "americafirst%20neverhillary%20-imwithher%20-strongertogether";
+        String Hquery = "imwithher%20strongertogether";//%20-americafirst%20-neverhillary";
+        String Tquery = "americafirst%20neverhillary";//%20-imwithher%20-strongertogether";
 
         iterations = 0;
         runavg_Tanger = 0;
