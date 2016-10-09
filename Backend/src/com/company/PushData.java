@@ -26,20 +26,20 @@ public class PushData {
     }
     private static Firebase fb = new Firebase("https://twitterbicker.firebaseio.com/");
 
-    public static void main(String [] args) {
-
-        PushData pushData = new PushData();
-        HashMap data = new HashMap<String, Object>();
-        data.put("Agreeableness", 30);
-        data.put("Conscientiousness", 20);
-        data.put("Emotional Range", 9);
-        data.put("Extraversion", 0);
-        data.put("Openness", 14);
-        pushData.updateMostUsedWords(data);
-        //pushData.updateAngryTweets(40, 60);
-        while(true){}
-        // pushData.destroyConnection();
-    }
+//    public static void main(String [] args) {
+//
+//        PushData pushData = new PushData();
+//        HashMap data = new HashMap<String, Object>();
+//        data.put("Agreeableness", 30);
+//        data.put("Conscientiousness", 20);
+//        data.put("Emotional Range", 9);
+//        data.put("Extraversion", 0);
+//        data.put("Openness", 14);
+//        pushData.updateMostUsedWords(data);
+//        //pushData.updateAngryTweets(40, 60);
+//        while(true){}
+//        // pushData.destroyConnection();
+//    }
     public void updateSocialTendencies(Candidate candidate, Map<String, Object> socialTendencies){
         fb.child(candidate.toString()).updateChildren(socialTendencies);
     }

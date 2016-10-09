@@ -26,6 +26,11 @@ public class Main {
     static twitter4j.Twitter twitter;
     static ToneAnalyzer service;
     static List<Status> tweets;
+    static String HAngriestTweet;
+    static String TAngriestTweet;
+    static String HAngriestUser;
+    static String TAngriestUser;
+
 
     static void setTweets(String q) {
         try {
@@ -43,6 +48,7 @@ public class Main {
 
     }
 
+    //TODO: find angriest tweet
     static void calcSumsAndAves(List<Status> tweets, HashMap<String, Double> sums, HashMap<String, Integer> counts) {
         for (Status tweet : tweets) {
             String text = tweet.getText();
@@ -154,6 +160,17 @@ public class Main {
             System.out.println(k + ": " + Double.toString(v));
         });
 
+        PushData pushData = new PushData();
 
+        //TODO: calculate fractions of angry tweets for Hillary and Trump
+        int totalangry = Tcounts.get("Anger") + Hcounts.get("Anger");
+        if(totalangry != 0) {
+            int hillaryangry = Hcounts.get("Anger") / totalangry;
+            int trumpangry = Tcounts.get("Anger") / totalangry;
+            System.out.println(hillaryangry + " : " + trumpangry);
+            pushData.updateAngryTweets(hillaryangry, trumpangry);
+        } else {
+            System.out.println("No angry tweets");
+        }
     }
 }
